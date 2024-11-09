@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 
 const UploadComponent = ({ props, openRef, onUpload }) => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleDrop = async (acceptfiles) => {
     if (acceptfiles.length > 0) {

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import Sidebar from "../component/Sidebar/Sidebar";
-import Dashboard from "../component/Dashboard/Dashboard";
 import RegisterList from "../component/RegisterList/RegisterList";
 
 const AdminHomePage = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("register-list");
 
   return (
     <div className="flex h-screen">
@@ -15,8 +14,6 @@ const AdminHomePage = () => {
 
       {/* Scrollable right section */}
       <div className="ml-64 flex-1 overflow-y-scroll h-full">
-        {activeTab === "dashboard" && <Dashboard />}
-
         {activeTab === "register-list" && <RegisterList />}
       </div>
     </div>

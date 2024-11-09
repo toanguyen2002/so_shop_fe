@@ -21,7 +21,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Loading from "../../components/Loading/Loading";
 
 const Orders = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [activeTab, setActiveTab] = useState("paid");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -512,7 +512,7 @@ const Orders = () => {
                     </button>
                   )}
 
-                  {selectedOrder.sellerAccept && (
+                  {selectedOrder.sellerAccept && !selectedOrder.isCancel && (
                     <p className="text-green-500">
                       Đơn hàng đã được chấp nhận và đang vận chuyển, không thể
                       huỷ.

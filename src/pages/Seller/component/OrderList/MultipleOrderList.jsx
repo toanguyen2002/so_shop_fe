@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect } from "react";
-import { acceptTradeAPI, getTradeBySellerAPI } from "../../../../api/tradeAPI";
-import { useSelector } from "react-redux";
+import {
+  acceptTradeAPI,
+  cancelTradeAPI,
+  getTradeBySellerAPI,
+} from "../../../../api/tradeAPI";
 import { getProductById } from "../../../../api/productAPI";
 import Loading from "../../../../components/Loading/Loading";
 const MultipleOrderList = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDateRange, setSelectedDateRange] = useState({
     from: "",
@@ -78,8 +82,14 @@ const MultipleOrderList = () => {
                   formattedDate,
                   formattedTime,
                   phoneContact: user.number,
-                  status: order.sellerAccept ? "Approval" : "Pending",
-                  statusColor: order.sellerAccept
+                  status: order.isCancel
+                    ? "Canceled"
+                    : order.sellerAccept
+                    ? "Approval"
+                    : "Pending",
+                  statusColor: order.isCancel
+                    ? "text-red-500"
+                    : order.sellerAccept
                     ? "text-green-500"
                     : "text-yellow-500",
                   paymentMethod:
@@ -161,7 +171,39 @@ const MultipleOrderList = () => {
     }
   };
 
-  const handleRejectedOrder = () => {};
+  const handleRejectedOrder = async (tradeId) => {
+    // Create a clean, serializable version of the order
+    const formData = {
+      tradeId: selectedOrder.tradeId,
+      buyer: selectedOrder.buyerId,
+      seller: selectedOrder.sellerId,
+      balance: selectedOrder.balence,
+    };
+
+    // Log formData to verify it is clean and serializable
+    console.log("Clean formData:", formData);
+
+    try {
+      const response = await cancelTradeAPI(formData, user.access_token);
+      console.log("Cancel trade", response);
+      if (response.status === 201) {
+        const updatedOrders = orders.map((order) => {
+          if (order.tradeId === selectedOrder.tradeId) {
+            return {
+              ...order,
+              status: "Canceled",
+              statusColor: "text-red-500",
+            };
+          }
+          return order;
+        });
+        setOrders(updatedOrders);
+        setShowModal(false);
+      }
+    } catch (error) {
+      console.error("Error cancel trade:", error);
+    }
+  };
 
   return (
     <div className="p-6">
@@ -269,15 +311,7 @@ const MultipleOrderList = () => {
               >
                 {order.tradeId}
               </td>
-              {/* <td
-                className="p-4 border-b truncate max-w-xs cursor-pointer"
-                onClick={() => handleShowDetails(order)}
-              >
-                {order.productName}
-              </td> */}
-              {/* <td className="p-4 border-b truncate max-w-xs">
-                {order.category}
-              </td> */}
+
               <td className="p-4 border-b truncate max-w-xs">
                 {order.buyersaddress}
               </td>

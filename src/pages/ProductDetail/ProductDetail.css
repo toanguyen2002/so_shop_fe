@@ -21,7 +21,7 @@
 }
 
 .main-image img {
-  width: 330px;
+  width: 380px;
   height: 330px;
 }
 
@@ -35,8 +35,8 @@
   display: flex;
   justify-content: flex-start;
   overflow: hidden;
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 400px;
+  max-height: 400px;
 }
 
 .thumbnail-section img {
@@ -273,11 +273,6 @@
     margin: 20px 0;
     flex-direction: column;
     padding: 10px;
-  }
-
-  .main-image img {
-    width: 100%;
-    height: auto;
   }
 
   .thumnail-container {

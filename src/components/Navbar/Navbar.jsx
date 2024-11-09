@@ -28,7 +28,7 @@ const Navbar = () => {
   const cartRef = useRef(null);
   const profileRef = useRef(null);
   const subNavbarLinksRef = useRef(null);
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
   // const history = [];
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useDebounce(

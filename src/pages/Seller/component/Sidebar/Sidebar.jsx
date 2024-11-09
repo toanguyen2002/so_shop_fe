@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const [isOrdersDropdownOpen, setIsOrdersDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleProductsDropdown = () => {
     setIsProductsDropdownOpen(!isProductsDropdownOpen);
@@ -106,6 +108,13 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           </li> */}
         </ul>
       </nav>
+      {/* Back to Home Button */}
+      <div
+        className="absolute bottom-0 w-full p-4 text-center hover:bg-gray-700 cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        Back to Home
+      </div>
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import { getProductById } from "../../../../api/productAPI";
 import Loading from "../../../../components/Loading/Loading";
 const OrderList = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDateRange, setSelectedDateRange] = useState({
     from: "",
@@ -75,7 +75,7 @@ const OrderList = () => {
                     numberProduct: order.products[0].numberProduct,
                     phoneContact: user.number,
                     status: order.isCancel
-                      ? "Cancel"
+                      ? "Canceled"
                       : order.sellerAccept
                       ? "Approval"
                       : "Pending",

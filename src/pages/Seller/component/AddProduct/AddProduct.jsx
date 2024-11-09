@@ -15,7 +15,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Loading from "../../../../components/Loading/Loading";
 
 const AddProduct = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [loading, setLoading] = useState(false);
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState([

@@ -23,7 +23,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import Loading from "../../../../components/Loading/Loading";
 
 const UpdateProduct = ({ product, setActiveTab }) => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [productDetails, setProductDetails] = useState({
     productName: product?.productName || "",

@@ -19,7 +19,7 @@ import { addTradeAPI, tradePaymentAPI } from "../../api/tradeAPI";
 import Loading from "../../components/Loading/Loading";
 
 const Cart = () => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [cartItems, setCartItems] = useState([]);
   const [selectedClassifies, setSelectedClassifies] = useState({});
 

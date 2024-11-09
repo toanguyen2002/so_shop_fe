@@ -11,7 +11,7 @@ const PurchaseModal = ({
   product,
   onShowSuccessOrderModal,
 }) => {
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [discountCode, setDiscountCode] = useState("");
   const [quantity, setQuantity] = useState(1);

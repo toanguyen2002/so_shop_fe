@@ -15,7 +15,7 @@ import Loading from "../Loading/Loading";
 
 const ProfileSection = ({ props }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const openRef = useRef(null);
   const [name, setName] = useState(user?.name || "");
@@ -127,11 +127,13 @@ const ProfileSection = ({ props }) => {
 
     if (user.name === "" || user.phone === "" || user.address === "") {
       alert("Vui lòng nhập đầy đủ thông tin");
+      setLoading(false);
       return;
     }
 
     if (isEditAddress && addressDetail === "") {
       alert("Vui lòng nhập địa chỉ chi tiết");
+      setLoading(false);
       return;
     }
 
