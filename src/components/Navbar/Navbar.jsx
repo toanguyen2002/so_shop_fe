@@ -538,7 +538,11 @@ const Navbar = () => {
               ) : (
                 <div>
                   <div className="nav-auth">
-                    <Link className="link" to="/signin">
+                    <Link
+                      className="link"
+                      style={{ color: "#f0f0f0" }}
+                      to="/signin"
+                    >
                       Đăng Nhập
                     </Link>
                     <Link className="link primary-btn" to="/signup">
@@ -647,9 +651,9 @@ const Navbar = () => {
             </div>
 
             <div className="sub-navbar-section">
-              {/* <Link className="subnavbar-link" to="/help">
+              <Link className="subnavbar-link" to="/help">
                 Hỗ trợ
-              </Link> */}
+              </Link>
               <Link className="subnavbar-link" to="/contact">
                 Liên Hệ
               </Link>

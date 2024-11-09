@@ -23,6 +23,7 @@ import { getAllCate } from "../../api/cateAPI";
 import OrderSuccessModal from "../../components/Modal/OrderSuccessModal";
 import { useMemo } from "react";
 import Loading from "../../components/Loading/Loading";
+import InformLogin from "../../components/Modal/InformLogin";
 
 const ProductDetail = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -47,6 +48,7 @@ const ProductDetail = () => {
   const [images, setImages] = useState([]);
   const visibleThumbnail = images;
   const [loading, setLoading] = useState(false);
+  const [openInform, setOpenInform] = useState(false);
 
   const [itemPurchase, setItemPurchase] = useState({
     buyer: "",
@@ -60,7 +62,7 @@ const ProductDetail = () => {
   });
 
   const itemAddToCart = {
-    buyer: user._id,
+    buyer: "",
     productId: "",
     classifyId: "",
     seller: "",
@@ -196,6 +198,11 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     if (!product) return;
+    if (!user) {
+      setOpenInform(true);
+      return;
+    }
+    itemAddToCart.buyer = user._id;
     itemAddToCart.productId = product._id;
     itemAddToCart.seller = product.seller;
     itemAddToCart.classifyId = selectedOptions._id;
@@ -215,6 +222,11 @@ const ProductDetail = () => {
   };
 
   const handleBuyNowClick = () => {
+    if (!product) return;
+    if (!user) {
+      setOpenInform(true);
+      return;
+    }
     const item = {
       buyer: user._id,
       productId: product._id,
@@ -238,6 +250,7 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-page">
+      {!user && openInform && <InformLogin isOpen={openInform} />}
       {loading && <Loading />}
       {showNotification && (
         <Notification
