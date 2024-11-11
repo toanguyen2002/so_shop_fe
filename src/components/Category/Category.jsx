@@ -4,12 +4,10 @@ import { useEffect } from "react";
 import ProductSection from "../Sections/ProductSection";
 import {
   getClassifiesByProductId,
-  getProductsByPage,
   getProductsDynamic,
   getTotalProduct,
 } from "../../api/productAPI";
 import { Drawer, Pagination, Stack } from "@mui/material";
-import { getAllCate } from "../../api/cateAPI";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllCategories } from "../../features/cateSlice";
@@ -76,7 +74,6 @@ const Category = () => {
 
         // Fetch products based on dynamic sorting and brand filtering
         response = await getProductsDynamic(query);
-        console.log(`Response data for query: ${query}`, response.data);
 
         const data = response.data;
 
@@ -167,7 +164,6 @@ const Category = () => {
     const fetchTotalProduct = async () => {
       try {
         const response = await getTotalProduct();
-        console.log("Total products", response);
         setTotalPages(Math.ceil(response.data / 20));
       } catch (error) {
         console.error("Failed to fetch total products", error);

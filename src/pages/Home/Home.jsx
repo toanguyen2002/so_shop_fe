@@ -15,15 +15,19 @@ import Notification from "../../components/Notification/Notification";
 import {
   getClassifiesByProductId,
   getProductMainPage,
+  getProductsDynamic,
 } from "../../api/productAPI";
 import Loading from "../../components/Loading/Loading";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { fetchCategories } from "../../actions/cateAction";
-import { selectAllCategories } from "../../features/cateSlice";
 import TopSellerSection from "../../components/Sections/TopSellerSection";
+import TopProductSellSection from "../../components/Sections/TopProductSellSection";
+import TopProductNew from "../../components/Sections/TopProductNew";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [topProductSelled, setTopProductSelled] = useState([]);
+  const [topProductNew, setTopProductNew] = useState([]);
   const locate = useLocation();
   const successMessage = locate.state ? locate.state.successMessage : "";
   const [showNotification, setShowNotification] = useState(!!successMessage);
@@ -42,7 +46,6 @@ const Home = () => {
           })
         );
         setProducts(productWithClassifies);
-        console.log("Products Homepage: ", productWithClassifies);
       } catch (error) {
         console.log("Error fetching products: ", error);
       }
@@ -50,9 +53,44 @@ const Home = () => {
     fetchProductMainPage();
   }, []);
 
+  useEffect(() => {
+    const fetchTopProductSelled = async () => {
+      try {
+        let query = `&page=${1}&brand=${""}&cate=${""}&${"selled=-1"}`;
+
+        // Fetch products based on dynamic sorting and brand filtering
+        const response = await getProductsDynamic(query);
+
+        const slicedData = response.data.slice(0, 8);
+
+        setTopProductSelled(slicedData);
+      } catch (error) {
+        console.log("Error fetching top product selled: ", error);
+      }
+    };
+    fetchTopProductSelled();
+  }, []);
+
+  useEffect(() => {
+    const fetchTopProductNews = async () => {
+      try {
+        let query = `&page=${1}&brand=${""}&cate=${""}&${"dateUp=1"}`;
+
+        // Fetch products based on dynamic sorting and brand filtering
+        const response = await getProductsDynamic(query);
+
+        const slicedData = response.data.slice(0, 8);
+
+        setTopProductNew(slicedData);
+      } catch (error) {
+        console.log("Error fetching top product selled: ", error);
+      }
+    };
+    fetchTopProductNews();
+  }, []);
+
   // get all categories
   const dispatch = useDispatch();
-  const categories = useSelector(selectAllCategories);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -90,7 +128,31 @@ const Home = () => {
         </section>
 
         <section className="products">
-          <ProductSection isHomepage={true} products={products} />
+          <div className="bg-white rounded shadow-md p-4 text-center items-center flex justify-center">
+            <h2 className="text-2xl">Sản Phẩm Bán Chạy</h2>
+          </div>
+
+          <div className="pt-5">
+            <TopProductSellSection topProductSelled={topProductSelled} />
+          </div>
+        </section>
+
+        <section className="products">
+          <div className="bg-white rounded shadow-md p-4 text-center items-center flex justify-center">
+            <h2 className="text-2xl">Sản Phẩm Mới Nhất</h2>
+          </div>
+          <div className="pt-5">
+            <TopProductNew topProductNew={topProductNew} />
+          </div>
+        </section>
+
+        <section className="products">
+          <div className="bg-white rounded shadow-md p-4 text-center items-center flex justify-center">
+            <h2 className="text-2xl">Danh Sách Sản Phẩm</h2>
+          </div>
+          <div className="pt-5">
+            <ProductSection isHomepage={true} products={products} />
+          </div>
         </section>
 
         <section className="footer">

@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import Typography from "@mui/material/Typography";
-// import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { Link } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
 
-const ProductSection = ({ isHomepage, products }) => {
+const TopProductSellSection = ({ topProductSelled }) => {
   const [rating, setRating] = useState(4);
 
   const getPrice = (classifies) => {
@@ -17,7 +16,7 @@ const ProductSection = ({ isHomepage, products }) => {
   return (
     <>
       <div className="product-container">
-        {products?.map((product) => (
+        {topProductSelled?.map((product) => (
           <RouterLink
             className="product-link"
             to={`/product/${product._id}`}
@@ -50,30 +49,13 @@ const ProductSection = ({ isHomepage, products }) => {
                   </span>
                   <span>Đã bán {product.selled}</span>
                 </div>
-                {/* <button className="add-to-cart-btn">
-                  <AddShoppingCartIcon />
-                </button> */}
               </div>
             </div>
           </RouterLink>
         ))}
       </div>
-      {isHomepage ? (
-        <div className="view-more">
-          <Link
-            className="btn-view-more"
-            color="ivory"
-            underline="none"
-            href="/products"
-          >
-            Xem Thêm
-          </Link>
-        </div>
-      ) : (
-        <></>
-      )}
     </>
   );
 };
 
-export default ProductSection;
+export default TopProductSellSection;
