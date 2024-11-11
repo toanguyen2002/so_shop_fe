@@ -1,7 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Products from "./pages/Products/Products";
 import SignIn from "./pages/Auth/SignIn";
@@ -16,6 +15,7 @@ import Search from "./pages/Search/Search";
 import CatePage from "./pages/CatePage/CatePage";
 import TopSeller from "./pages/TopSeller/TopSeller";
 import AdminHomePage from "./pages/Admin/AdminHomePage/AdminHomePage";
+import Help from "./pages/Help/Help";
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/help" element={<Help />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<Products />} />
         <Route path="/profile" element={<Profile />} />

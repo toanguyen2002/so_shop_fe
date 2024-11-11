@@ -92,10 +92,17 @@ const CategorySection = () => {
                   case "Thức ăn vặt":
                     imgSrc = thucanvat;
                     break;
-                  case "Điện thoại":
+                    {
+                      /* case "Điện thoại":
                     imgSrc = dienthoai;
-                    break;
-                  case "Laptop":
+                    break; */
+                    }
+                    {
+                      /* case "Laptop":
+                    imgSrc = laptop;
+                    break; */
+                    }
+                  case "Đồ công nghệ":
                     imgSrc = laptop;
                     break;
                   case "Thực phẩm":

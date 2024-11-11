@@ -645,9 +645,6 @@ const Navbar = () => {
               <Link className="subnavbar-link" to="/products">
                 Sản phẩm
               </Link>
-              {/* <Link className="subnavbar-link" to="/categories">
-                Danh Mục
-              </Link> */}
             </div>
 
             <div className="sub-navbar-section">

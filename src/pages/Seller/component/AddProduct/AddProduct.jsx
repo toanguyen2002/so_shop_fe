@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import UploadComponent from "../../../../components/Dropzone/UploadComponent";
 import ClearIcon from "@mui/icons-material/Clear";
 
-import { useSelector } from "react-redux";
 import {
   addClassifyAPI,
   addProductAPI,
@@ -21,8 +20,8 @@ const AddProduct = () => {
   const [productDescription, setProductDescription] = useState([
     { key: "", value: "" },
   ]);
-  const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
   const [brand, setBrand] = useState("");
   const [classifies, setClassifies] = useState([
     { key: "", value: "", price: 0, stock: 0 },
@@ -130,6 +129,7 @@ const AddProduct = () => {
     const fetchCategories = async () => {
       const response = await getAllCate();
       setCategories(response.data);
+      setCategory(response.data[0]._id);
     };
     fetchCategories();
   }, []);

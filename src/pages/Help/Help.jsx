@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Contact = () => {
+const Help = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <h1 className="text-3xl font-semibold text-gray-800">
@@ -18,4 +18,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default Help;
