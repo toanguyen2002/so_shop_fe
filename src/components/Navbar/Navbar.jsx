@@ -1,7 +1,7 @@
 import React from "react";
 import "./Navbar.css";
 import SearchIcon from "@mui/icons-material/Search";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import { Avatar, Drawer, useMediaQuery } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -157,7 +157,7 @@ const Navbar = () => {
 
   const handleShowCart = async () => {
     const response = await getCartItemByBuyerId(user._id);
-    const processedItems = response.data.products.flatMap((product) =>
+    const processedItems = response.data.products?.flatMap((product) =>
       product.items.map((item) => ({
         ...item,
         seller: product.seller,
@@ -336,7 +336,15 @@ const Navbar = () => {
       <nav className="navbar-container">
         <div className="navbar-content">
           <div className="navbar-logo">
-            <h2 style={{ color: "#f0f0f0", fontSize: "1.6rem" }}>Ecomerce</h2>
+            <h2
+              style={{
+                color: "#f0f0f0",
+                fontSize: "1.6rem",
+                fontWeight: "900",
+              }}
+            >
+              SO-SHOP
+            </h2>
           </div>
           <div className="navbar-search">
             {/* <div className="search-icon">
@@ -357,7 +365,9 @@ const Navbar = () => {
             {showHistory && (
               <div className="search-history">
                 {searchHistory.length === 0 ? (
-                  <p className="history-item">Chưa có lịch sử tìm kiếm</p>
+                  <p className="history-item disabled" disabled>
+                    Chưa có lịch sử tìm kiếm
+                  </p>
                 ) : isTyping ? (
                   searchHistory
                     .filter((term) => {
@@ -401,7 +411,7 @@ const Navbar = () => {
           <div className="cart-avatar">
             <div className="navbar-cart" ref={cartRef}>
               <button className="cart-btn" onClick={handleShowCart}>
-                <ShoppingCartIcon />
+                <ShoppingCartOutlinedIcon sx={{ color: "white" }} />
                 {/* <span className="cart-count">3</span> */}
               </button>
               {!isMobile && showCart && (
@@ -410,41 +420,47 @@ const Navbar = () => {
                     <div className="cart-title">Sản Phẩm Mới Thêm</div>
                     {/* Container có scroll chỉ cho danh sách sản phẩm */}
                     <div className="cart-items-container">
-                      {cartItems.map((item) => {
-                        const product = productData[item.productId];
-                        const classify =
-                          selectedClassifies[
-                            `${item.productId}-${item.classifyId}`
-                          ];
-                        const itemPrice = classify?.price || item.price;
-                        return (
-                          <div
-                            className="cart-item-container"
-                            key={`${item.productId}-${item.classifyId}`}
-                          >
-                            <div className="cart-item">
-                              <img
-                                src={product?.images[0] || prod1}
-                                alt={product?.productName || "Product Image"}
-                                className="cart-item-img"
-                              />
-                              <div className="cart-item-info">
-                                <span className="cart-item-name">
-                                  {product?.productName || "Loading..."}
-                                </span>
-                                <span className="cart-item-price">
-                                  {itemPrice >= 1000
-                                    ? itemPrice.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                      })
-                                    : `${itemPrice} đ`}
-                                </span>
+                      {cartItems.length === 0 ? (
+                        <div className="empty-cart-message">
+                          Chưa có item nào trong giỏ hàng
+                        </div>
+                      ) : (
+                        cartItems.map((item) => {
+                          const product = productData[item.productId];
+                          const classify =
+                            selectedClassifies[
+                              `${item.productId}-${item.classifyId}`
+                            ];
+                          const itemPrice = classify?.price || item.price;
+                          return (
+                            <div
+                              className="cart-item-container"
+                              key={`${item.productId}-${item.classifyId}`}
+                            >
+                              <div className="cart-item">
+                                <img
+                                  src={product?.images[0] || prod1}
+                                  alt={product?.productName || "Product Image"}
+                                  className="cart-item-img"
+                                />
+                                <div className="cart-item-info">
+                                  <span className="cart-item-name">
+                                    {product?.productName || "Loading..."}
+                                  </span>
+                                  <span className="cart-item-price">
+                                    {itemPrice >= 1000
+                                      ? itemPrice.toLocaleString("vi-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
+                                      : `${itemPrice} đ`}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })
+                      )}
                     </div>
                     {/* Nút luôn ở dưới */}
                     <div className="view-cart-container">
@@ -456,62 +472,98 @@ const Navbar = () => {
                 </div>
               )}
 
-              {cartItems.map((item) => {
-                const product = productData[item.productId];
-                const classify =
-                  selectedClassifies[`${item.productId}-${item.classifyId}`];
-                const itemPrice = classify?.price || item.price;
-                return (
-                  <Drawer
-                    key={`${item.productId}-${item.classifyId}`}
-                    anchor="bottom"
-                    open={openDrawer}
-                    onClose={() => setOpenDrawer(false)}
-                    PaperProps={{
-                      style: {
-                        height: "60vh",
-                        overflow: "auto",
-                        padding: "16px",
-                      },
-                    }}
-                    BackdropProps={{
-                      style: {
-                        backgroundColor: "transparent", // Loại bỏ nền đen khi mở Drawer
-                      },
-                    }}
-                  >
-                    <div className="cart-title">Sản Phẩm Mới Thêm</div>
-                    <div className="cart-item-container">
-                      <div className="cart-item">
-                        <img
-                          src={product?.images[0] || prod1}
-                          alt={product?.productName || "Product Image"}
-                          className="cart-item-img"
-                        />
-                        <div className="cart-item-info">
-                          <span className="cart-item-label">
-                            Combo khuyến mãi
-                          </span>
-                          <span className="cart-item-name">
-                            {product?.productName}
-                          </span>
-                          <span className="cart-item-price">
-                            {itemPrice >= 1000
-                              ? itemPrice.toLocaleString("vi-VN", {
-                                  style: "currency",
-                                  currency: "VND",
-                                })
-                              : `${itemPrice} đ`}
-                          </span>
+              {cartItems.length > 0 ? (
+                <Drawer
+                  anchor="bottom"
+                  open={openDrawer}
+                  onClose={() => setOpenDrawer(false)}
+                  PaperProps={{
+                    style: {
+                      height: "60vh",
+                      overflow: "auto",
+                      padding: "16px",
+                    },
+                  }}
+                  BackdropProps={{
+                    style: {
+                      backgroundColor: "transparent", // Loại bỏ nền đen khi mở Drawer
+                    },
+                  }}
+                >
+                  <div className="cart-title">Sản Phẩm Mới Thêm</div>
+                  <div className="cart-items-container">
+                    {cartItems.map((item) => {
+                      const product = productData[item.productId];
+                      const classify =
+                        selectedClassifies[
+                          `${item.productId}-${item.classifyId}`
+                        ];
+                      const itemPrice = classify?.price || item.price;
+
+                      return (
+                        <div
+                          className="cart-item-container"
+                          key={`${item.productId}-${item.classifyId}`}
+                        >
+                          <div className="cart-item">
+                            <img
+                              src={product?.images[0] || prod1}
+                              alt={product?.productName || "Product Image"}
+                              className="cart-item-img"
+                            />
+                            <div className="cart-item-info">
+                              <span className="cart-item-label">
+                                Combo khuyến mãi
+                              </span>
+                              <span className="cart-item-name">
+                                {product?.productName || "Loading..."}
+                              </span>
+                              <span className="cart-item-price">
+                                {itemPrice >= 1000
+                                  ? itemPrice.toLocaleString("vi-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    })
+                                  : `${itemPrice} đ`}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      );
+                    })}
+                  </div>
+                  <a href="/cart" className="view-cart-button">
+                    Xem Giỏ Hàng
+                  </a>
+                </Drawer>
+              ) : (
+                <Drawer
+                  anchor="bottom"
+                  open={openDrawer}
+                  onClose={() => setOpenDrawer(false)}
+                  PaperProps={{
+                    style: {
+                      height: "60vh",
+                      overflow: "auto",
+                      padding: "16px",
+                    },
+                  }}
+                  BackdropProps={{
+                    style: {
+                      backgroundColor: "transparent", // Loại bỏ nền đen khi mở Drawer
+                    },
+                  }}
+                >
+                  <div className="cart-item-container">
+                    <div className="empty-cart-message">
+                      Chưa có item nào trong giỏ hàng
                     </div>
-                    <a href="/cart" className="view-cart-button">
-                      Xem Giỏ Hàng
-                    </a>
-                  </Drawer>
-                );
-              })}
+                  </div>
+                  <a href="/cart" className="view-cart-button">
+                    Xem Giỏ Hàng
+                  </a>
+                </Drawer>
+              )}
             </div>
             <div className="navbar-avatar">
               {user ? (

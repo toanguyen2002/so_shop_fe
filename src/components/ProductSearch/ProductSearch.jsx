@@ -16,7 +16,15 @@ const ProductSearch = () => {
   const hasCategoryProducts = productByCate.length > 0;
   const hasProductsSeller = productsSeller.length > 0;
 
-  const totalPages = location.state?.totalPages || 2;
+  const totalPages = Math.ceil(
+    hasSearchResults
+      ? searchResults.length / 20
+      : hasCategoryProducts
+      ? productByCate.length / 20
+      : hasProductsSeller
+      ? productsSeller.length / 20
+      : 1
+  );
 
   const [currentPage, setCurrentPage] = useState(1);
 

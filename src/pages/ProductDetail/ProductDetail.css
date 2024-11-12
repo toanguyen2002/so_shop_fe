@@ -177,6 +177,11 @@
   padding: 10px 0;
 }
 
+.addition.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
 .add-cart-btn,
 .buy-now-btn {
   border-radius: 4px;

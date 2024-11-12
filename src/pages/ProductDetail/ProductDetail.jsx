@@ -192,8 +192,16 @@ const ProductDetail = () => {
     setCurrentImage(image);
   };
 
+  // const handleQuantityChange = (delta) => {
+  //   setQuantity((prevQuantity) => Math.max(1, prevQuantity + delta));
+  // };
+
   const handleQuantityChange = (delta) => {
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity + delta));
+    setQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + delta;
+      // Ensure quantity does not go below 1 or exceed stock of the selected classify
+      return Math.max(1, Math.min(newQuantity, selectedOptions.stock || 1));
+    });
   };
 
   const handleAddToCart = async () => {
@@ -377,8 +385,11 @@ const ProductDetail = () => {
               </button>
               <input type="text" value={quantity} readOnly />
               <button
-                onClick={() => handleQuantityChange(+1)}
-                className="addition"
+                onClick={() => handleQuantityChange(1)}
+                disabled={quantity >= (selectedOptions.stock || 1)}
+                className={`addition ${
+                  quantity >= (selectedOptions.stock || 1) ? "disabled" : ""
+                }`}
               >
                 +
               </button>
