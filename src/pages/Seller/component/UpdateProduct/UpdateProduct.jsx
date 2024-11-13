@@ -22,6 +22,9 @@ import UploadComponent from "../../../../components/Dropzone/UploadComponent";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Loading from "../../../../components/Loading/Loading";
 
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 const UpdateProduct = ({ product, setActiveTab }) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -113,10 +116,6 @@ const UpdateProduct = ({ product, setActiveTab }) => {
     "Cách dùng",
     "Hướng dẫn sử dụng",
   ];
-
-  useEffect(() => {
-    console.log("Product:", product);
-  }, [product]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -329,7 +328,9 @@ const UpdateProduct = ({ product, setActiveTab }) => {
       const updatedAttributes = [...attributes];
       updatedAttributes.splice(index, 1);
       setAttributes(updatedAttributes);
-      const response = await deleteAttributeAPI(id, user.access_token);
+      if (id) {
+        const response = await deleteAttributeAPI(id, user.access_token);
+      }
     } catch (error) {
       console.error("Error deleting attribute:", error);
     }
@@ -341,7 +342,9 @@ const UpdateProduct = ({ product, setActiveTab }) => {
       const updatedDescriptions = [...descriptions];
       updatedDescriptions.splice(index, 1);
       setDescriptions(updatedDescriptions);
-      const response = await deleteDescriptionAPI(id, user.access_token);
+      if (id) {
+        const response = await deleteDescriptionAPI(id, user.access_token);
+      }
     } catch (error) {
       console.error("Error deleting description:", error);
     }
@@ -652,11 +655,11 @@ const UpdateProduct = ({ product, setActiveTab }) => {
 
       {/* Descriptions Section */}
       <div className="mb-6 p-4 bg-white shadow rounded-lg">
-        <h2 className="font-bold text-xl mb-4">Mô Tả Sản Phẩm</h2>
+        <h2 className="font-bold text-xl">Mô Tả Sản Phẩm</h2>
         {descriptions.map((description, index) => (
-          <div key={index} className="grid grid-cols-2 gap-4 mb-8">
+          <div key={index} className="flex flex-col">
             <div>
-              <label className="block font-semibold">Mô Tả</label>
+              <label className="block font-semibold pt-4">Mô Tả</label>
               <input
                 list={`description-suggestions-${index}`}
                 type="text"
@@ -668,7 +671,7 @@ const UpdateProduct = ({ product, setActiveTab }) => {
                     )
                   )
                 }
-                className="mt-2 p-2 border rounded w-full"
+                className="p-2 border rounded-lg w-1/3"
               />
               <datalist id={`description-suggestions-${index}`}>
                 {descriptionSuggestions.map((suggestion, idx) => (
@@ -677,28 +680,26 @@ const UpdateProduct = ({ product, setActiveTab }) => {
               </datalist>
             </div>
             <div>
-              <label className="block font-semibold">Nội Dung</label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="text"
+              <label className="block font-semibold pt-2">Nội Dung</label>
+              <div className="flex gap-2 items-center w-full">
+                <ReactQuill
+                  theme="snow"
                   value={description.value}
-                  onChange={(e) =>
+                  onChange={(value) =>
                     setDescriptions((prev) =>
                       prev.map((item, i) =>
-                        i === index ? { ...item, value: e.target.value } : item
+                        i === index ? { ...item, value } : item
                       )
                     )
                   }
-                  className="mt-2 p-2 border rounded w-full"
+                  className="flex-grow"
                 />
-                <div className="flex justify-end items-center col-span-1">
-                  <ClearIcon
-                    className="text-red-500 cursor-pointer"
-                    onClick={() =>
-                      handleDeleteDescription(index, description._id)
-                    }
-                  />
-                </div>
+                <ClearIcon
+                  className="text-red-500 cursor-pointer ml-2"
+                  onClick={() =>
+                    handleDeleteDescription(index, description._id)
+                  }
+                />
               </div>
             </div>
           </div>

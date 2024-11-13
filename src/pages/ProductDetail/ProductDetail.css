@@ -233,6 +233,28 @@
   margin-right: 20px;
 }
 
+.related-product {
+  width: 70%;
+  margin: 40px auto;
+}
+
+.label-title {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  align-items: center;
+}
+
+.label-title h2 {
+  font-size: 1.6rem;
+  font-weight: 550;
+}
+
+.related-item {
+  margin-top: 10px;
+}
+
 .add-cart-btn {
   border: 2px solid var(--color-secondary);
   background-color: #fff;

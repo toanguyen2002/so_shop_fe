@@ -1,16 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ProductSection from "../Sections/ProductSection";
 import { Pagination, Stack } from "@mui/material";
 import { useState } from "react";
+import { getProductsBySellerId } from "../../api/productAPI";
 
 const ProductSearch = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const location = useLocation();
   const searchResults = location.state?.searchResults || [];
   const valueToSearch = location.state?.valueToSearch || "";
   const productByCate = location.state?.products || [];
-  const productsSeller = location.state?.productsBySeller || [];
+  const sellerId = location.state?.sellerId || [];
   const cateName = location.state?.categoryName || "";
+
+  const [productsSeller, setProductsSeller] = useState([]);
+
+  useEffect(() => {
+    const fetchProductBySellerId = async () => {
+      try {
+        const response = await getProductsBySellerId(sellerId, currentPage);
+        console.log("product by sellerid: ", response.data);
+        setProductsSeller(response.data);
+      } catch (error) {
+        console.log("Error fetching top seller: ", error);
+      }
+    };
+    fetchProductBySellerId();
+  }, [sellerId, currentPage]);
 
   const hasSearchResults = searchResults.length > 0;
   const hasCategoryProducts = productByCate.length > 0;
@@ -26,7 +44,10 @@ const ProductSearch = () => {
       : 1
   );
 
-  const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    console.log("product seller");
+    console.log("total page", totalPages);
+  }, []);
 
   // handle page change
   const handlePageChange = (event, value) => {

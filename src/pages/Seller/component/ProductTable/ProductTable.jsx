@@ -10,11 +10,11 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
   const [columns, setColumns] = useState([
     { name: "ProductID", visible: true },
     { name: "Name", visible: true },
-    { name: "Category", visible: true },
-    { name: "Brand", visible: true },
-    { name: "Image", visible: true },
-    { name: "Dateup", visible: true },
-    { name: "Selled", visible: false },
+    { name: "Danh mục", visible: true },
+    { name: "Thương hiệu", visible: true },
+    { name: "Ảnh", visible: true },
+    { name: "Ngày tạo", visible: true },
+    { name: "Đã bán", visible: false },
   ]);
 
   const [loading, setLoading] = useState(false);
@@ -96,13 +96,13 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
     switch (column) {
       case "Name":
         return product.productName;
-      case "Category":
+      case "Danh mục":
         return product.categories[0]?.categoriesName || "";
-      case "Brand":
+      case "Thương hiệu":
         return product.brand;
-      case "Dateup":
+      case "Ngày tạo":
         return new Date(product.dateUp).getTime();
-      case "Selled":
+      case "Đã bán":
         return product.selled || 0;
       default:
         return "";
@@ -183,19 +183,19 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
                       <td key={col.name} className="py-2 px-4 text-sm">
                         {col.name === "ProductID" && product._id.slice(-6)}
                         {col.name === "Name" && product.productName}
-                        {col.name === "Category" &&
+                        {col.name === "Danh mục" &&
                           product.categories[0]?.categoriesName}
-                        {col.name === "Brand" && product.brand}
-                        {col.name === "Image" && (
+                        {col.name === "Thương hiệu" && product.brand}
+                        {col.name === "Ảnh" && (
                           <img
                             src={product.images[0]}
                             alt={product.productName}
                             className="w-16 h-16 object-cover"
                           />
                         )}
-                        {col.name === "Dateup" &&
+                        {col.name === "Ngày tạo" &&
                           new Date(product.dateUp).toLocaleDateString()}
-                        {col.name === "Selled" && product?.selled}
+                        {col.name === "Đã bán" && product?.selled}
                       </td>
                     )
                 )}
@@ -223,17 +223,17 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
           onClick={handlePreviousPage}
           disabled={page === 1}
         >
-          Previous
+          Trước Đó
         </button>
         <span className="p-2">
-          Page {page} of {totalPages}
+          Trang {page} / {totalPages}
         </span>
         <button
           className="bg-gray-300 p-2 rounded ml-2"
           onClick={handleNextPage}
           disabled={page === totalPages}
         >
-          Next
+          Tiếp Theo
         </button>
       </div>
     </div>

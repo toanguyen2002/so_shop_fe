@@ -210,7 +210,10 @@ const Category = () => {
                   key={category._id}
                   onClick={() => handleCategoryClick(category)}
                 >
-                  <a href="#category" className="category__filter-link">
+                  <a
+                    href={`#${category.categoriesName}`}
+                    className="category__filter-link"
+                  >
                     {category.categoriesName}
                   </a>
                 </li>
@@ -256,7 +259,13 @@ const Category = () => {
             >
               {brands.slice(5).map((brand) => (
                 <li className="category__filter-item" key={brand}>
-                  <a href="#brand" className="category__filter-link">
+                  <a
+                    href={`#${brand}`}
+                    onClick={() => handleBrandClick(brand)}
+                    className={`category__filter-link ${
+                      selectedBrand === brand ? "active" : ""
+                    }`}
+                  >
                     {brand}
                   </a>
                 </li>

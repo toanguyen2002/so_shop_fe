@@ -24,6 +24,7 @@ import OrderSuccessModal from "../../components/Modal/OrderSuccessModal";
 import { useMemo } from "react";
 import Loading from "../../components/Loading/Loading";
 import InformLogin from "../../components/Modal/InformLogin";
+import RelatedProducts from "../../components/Sections/RelatedProducts";
 
 const ProductDetail = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -433,6 +434,15 @@ const ProductDetail = () => {
         <div className="detail-product">
           <h2>Thông tin sản phẩm</h2>
           <DetailList details={descriptionData} />
+        </div>
+      </div>
+      {/* Related Products */}
+      <div className="related-product">
+        <div className="label-title">
+          <h2>Sản phẩm liên quan</h2>
+        </div>
+        <div className="related-item">
+          <RelatedProducts categoryName={category} />
         </div>
       </div>
       <div className="product-footer">

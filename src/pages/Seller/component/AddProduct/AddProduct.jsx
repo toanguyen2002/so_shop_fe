@@ -13,6 +13,9 @@ import { addDescriptionAPI } from "../../../../api/descriptAPI";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Loading from "../../../../components/Loading/Loading";
 
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 const AddProduct = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [loading, setLoading] = useState(false);
@@ -82,6 +85,12 @@ const AddProduct = () => {
     "Cách dùng",
     "Hướng dẫn sử dụng",
   ];
+
+  const handleDescriptionChange = (value, index) => {
+    setProductDescription((prev) =>
+      prev.map((desc, i) => (i === index ? { ...desc, value } : desc))
+    );
+  };
 
   // Function to add new description field
   const addDescription = () => {
@@ -430,12 +439,12 @@ const AddProduct = () => {
       <div className="mb-4">
         <label className="block text-gray-700">Mô Tả Sản Phẩm</label>
         {productDescription.map((desc, index) => (
-          <div key={index} className="flex space-x-4 mb-2 items-center">
+          <div key={index} className="flex flex-col gap-2 mb-2">
             <input
               list={`description-suggestions-${index}`}
               type="text"
               placeholder="Mô tả"
-              className="w-1/2 p-2 border rounded-lg"
+              className="w-1/3 p-2 border rounded-lg"
               value={desc.key}
               onChange={(e) =>
                 setProductDescription((prev) =>
@@ -450,23 +459,18 @@ const AddProduct = () => {
                 <option key={idx} value={suggestion} />
               ))}
             </datalist>
-            <input
-              type="text"
-              placeholder="Nội dung"
-              className="w-1/2 p-2 border rounded-lg"
-              value={desc.value}
-              onChange={(e) =>
-                setProductDescription((prev) =>
-                  prev.map((item, i) =>
-                    i === index ? { ...item, value: e.target.value } : item
-                  )
-                )
-              }
-            />
-            <ClearIcon
-              className="text-red-500 cursor-pointer"
-              onClick={() => deleteDescription(index)}
-            />
+            <div className="flex items-center gap-2 w-full">
+              <ReactQuill
+                theme="snow"
+                value={desc.value}
+                onChange={(value) => handleDescriptionChange(value, index)}
+                className="flex-grow"
+              />
+              <ClearIcon
+                className="text-red-500 cursor-pointer"
+                onClick={() => deleteDescription(index)}
+              />
+            </div>
           </div>
         ))}
         <button

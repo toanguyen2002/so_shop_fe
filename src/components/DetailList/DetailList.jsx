@@ -7,7 +7,10 @@ const DetailList = ({ details }) => {
       {details.map((detail, index) => (
         <div key={index} className="detail-item">
           <span className="detail-key">{detail.key}</span>
-          <span className="detail-value">{detail.value}</span>
+          <span
+            className="detail-value"
+            dangerouslySetInnerHTML={{ __html: detail.value }}
+          ></span>
         </div>
       ))}
     </div>
