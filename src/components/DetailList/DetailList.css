@@ -18,4 +18,9 @@
 .detail-value {
   color: #333;
   flex-basis: 70%;
+  line-height: 1.6;
+}
+
+.detail-value p {
+  margin: 8px 0;
 }

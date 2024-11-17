@@ -10,7 +10,7 @@ const RelatedProducts = ({ categoryName }) => {
       const response = await getProductsDynamic(
         `&page=${1}&brand=&cate=${categoryName}`
       );
-      const slicedData = response.data.slice(0, 4);
+      const slicedData = response.data.data.slice(0, 4);
       setRelatedProducts(slicedData);
       console.log("relatedProducts", response.data);
     };

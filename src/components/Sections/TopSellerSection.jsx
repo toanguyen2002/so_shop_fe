@@ -5,13 +5,11 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getTopSeller } from "../../api/userAPI";
-import { getProductsBySellerId } from "../../api/productAPI";
 
 const TopSellerSection = () => {
   const [sellers, setSellers] = useState([]);
 
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [width, setWidth] = useState(window.innerWidth);
 
@@ -48,9 +46,8 @@ const TopSellerSection = () => {
     }
   };
 
-  const handleTopSellerClick = (sellerId) => {
-    console.log("CLicked");
-    navigate("/product-seller-page", { state: { sellerId } });
+  const handleTopSellerClick = (sellerId, sellerName) => {
+    navigate("/product-seller-page", { state: { sellerId, sellerName } });
   };
 
   return (
@@ -73,7 +70,7 @@ const TopSellerSection = () => {
               .map((seller) => (
                 <div
                   key={seller._id}
-                  onClick={() => handleTopSellerClick(seller._id)}
+                  onClick={() => handleTopSellerClick(seller._id, seller.name)}
                   className="brand-item"
                   style={{ cursor: "pointer" }}
                 >

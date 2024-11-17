@@ -253,13 +253,19 @@ const ProductDetail = () => {
     console.log(itemPurchase);
   };
 
+  const handleCloseInform = () => {
+    setOpenInform(false);
+  };
+
   if (!product) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="product-detail-page">
-      {!user && openInform && <InformLogin isOpen={openInform} />}
+      {!user && openInform && (
+        <InformLogin isOpen={openInform} onClose={handleCloseInform} />
+      )}
       {loading && <Loading />}
       {showNotification && (
         <Notification

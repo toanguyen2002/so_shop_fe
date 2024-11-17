@@ -31,10 +31,12 @@ const Home = () => {
   const locate = useLocation();
   const successMessage = locate.state ? locate.state.successMessage : "";
   const [showNotification, setShowNotification] = useState(!!successMessage);
+  const [loading, setLoading] = useState(false);
 
   // get all products
   useEffect(() => {
     const fetchProductMainPage = async () => {
+      setLoading(true);
       try {
         const { data } = await getProductMainPage();
         const productWithClassifies = await Promise.all(
@@ -48,6 +50,8 @@ const Home = () => {
         setProducts(productWithClassifies);
       } catch (error) {
         console.log("Error fetching products: ", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProductMainPage();
@@ -55,17 +59,20 @@ const Home = () => {
 
   useEffect(() => {
     const fetchTopProductSelled = async () => {
+      setLoading(true);
       try {
         let query = `&page=${1}&brand=${""}&cate=${""}&${"selled=-1"}`;
 
         // Fetch products based on dynamic sorting and brand filtering
         const response = await getProductsDynamic(query);
 
-        const slicedData = response.data.slice(0, 8);
+        const slicedData = response.data.data.slice(0, 8);
 
         setTopProductSelled(slicedData);
       } catch (error) {
         console.log("Error fetching top product selled: ", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchTopProductSelled();
@@ -73,17 +80,20 @@ const Home = () => {
 
   useEffect(() => {
     const fetchTopProductNews = async () => {
+      setLoading(true);
       try {
         let query = `&page=${1}&brand=${""}&cate=${""}&${"dateUp=1"}`;
 
         // Fetch products based on dynamic sorting and brand filtering
         const response = await getProductsDynamic(query);
 
-        const slicedData = response.data.slice(0, 8);
+        const slicedData = response.data.data.slice(0, 8);
 
         setTopProductNew(slicedData);
       } catch (error) {
         console.log("Error fetching top product selled: ", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchTopProductNews();
@@ -98,6 +108,7 @@ const Home = () => {
 
   return (
     <div>
+      {loading && <Loading />}
       {showNotification && (
         <Notification
           message={successMessage}

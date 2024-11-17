@@ -74,8 +74,8 @@ const Category = () => {
 
         // Fetch products based on dynamic sorting and brand filtering
         response = await getProductsDynamic(query);
-
-        const data = response.data;
+        setTotalPages(Math.ceil(response.data.soLuongSP / 20));
+        const data = response.data.data;
 
         const productWithClassifies = await Promise.all(
           data.map(async (product) => {

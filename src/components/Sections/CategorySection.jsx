@@ -6,27 +6,21 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useEffect } from "react";
 import diendadung from "../../../public/images/diendadung.webp";
-import dienthoai from "../../../public/images/dienthoai.webp";
 import dongho from "../../../public/images/dongho.webp";
 import laptop from "../../../public/images/laptop.webp";
 import suckhoe from "../../../public/images/suckhoe.webp";
 import thoitrangnam from "../../../public/images/thoitrangnam.webp";
 import thoitrangnu from "../../../public/images/thoitrangnu.webp";
-// import thucanvat from "../../../public/images/thucanvat.webp";
 
 import thucanvat from "../../../public/images/thucanvat.jpg";
 import thucpham from "../../../public/images/thucpham.jpg";
 import phukien from "../../../public/images/phukien.jpg";
 import douong from "../../../public/images/douong.jpg";
-import { getProductsDynamic } from "../../api/productAPI";
-import Loading from "../Loading/Loading";
 
 const CategorySection = () => {
   const categories = useSelector((state) => selectAllCategories(state));
   const [startIndex, setStartIndex] = useState(0);
   const [width, setWidth] = useState(window.innerWidth);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,25 +43,12 @@ const CategorySection = () => {
     }
   };
 
-  const handleCategoryClick = async (categoryName) => {
-    setLoading(true);
-    try {
-      const response = await getProductsDynamic(
-        `&page=${currentPage}&brand=&cate=${categoryName}`
-      );
-      let products = response.data;
-      console.log("Products by category: ", response.data);
-      navigate("/cate-page", { state: { products, categoryName } });
-    } catch (error) {
-      console.log("Error fetching products: ", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleCategoryClick = (categoryName) => {
+    navigate("/cate-page", { state: { categoryName } });
   };
 
   return (
     <div className="category-section">
-      {loading && <Loading />}
       <div style={{ padding: 20 }}>
         <div className="category-header">
           <h3 className="h3-title">Danh Mục</h3>
@@ -92,16 +73,6 @@ const CategorySection = () => {
                   case "Thức ăn vặt":
                     imgSrc = thucanvat;
                     break;
-                    {
-                      /* case "Điện thoại":
-                    imgSrc = dienthoai;
-                    break; */
-                    }
-                    {
-                      /* case "Laptop":
-                    imgSrc = laptop;
-                    break; */
-                    }
                   case "Đồ công nghệ":
                     imgSrc = laptop;
                     break;
