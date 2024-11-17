@@ -15,7 +15,6 @@ import DetailList from "../../components/DetailList/DetailList";
 import PurchaseModal from "../../components/PurchaseModal/PurchaseModal";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { addToCart } from "../../api/cartAPI";
 import Notification from "../../components/Notification/Notification";
 import { getProductById } from "../../api/productAPI";
@@ -25,6 +24,7 @@ import { useMemo } from "react";
 import Loading from "../../components/Loading/Loading";
 import InformLogin from "../../components/Modal/InformLogin";
 import RelatedProducts from "../../components/Sections/RelatedProducts";
+import { useRef } from "react";
 
 const ProductDetail = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -69,6 +69,14 @@ const ProductDetail = () => {
     seller: "",
     numberProduct: quantity,
   };
+
+  const topRef = useRef(null);
+
+  useEffect(() => {
+    if (topRef.current) {
+      topRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -258,11 +266,11 @@ const ProductDetail = () => {
   };
 
   if (!product) {
-    return <div>Loading...</div>;
+    return <div ref={topRef}>Loading...</div>;
   }
 
   return (
-    <div className="product-detail-page">
+    <div className="product-detail-page" ref={topRef}>
       {!user && openInform && (
         <InformLogin isOpen={openInform} onClose={handleCloseInform} />
       )}
@@ -363,7 +371,7 @@ const ProductDetail = () => {
           </div>
           {selectedKey && (
             <div className="detail-classifies-values">
-              {groupClassifies[selectedKey].map((classify) => (
+              {groupClassifies[selectedKey]?.map((classify) => (
                 <button
                   key={classify._id}
                   className={`value-btn ${

@@ -271,15 +271,17 @@ const Category = () => {
                 </li>
               ))}
             </div>
-            <li className="category__filter-item">
-              <p
-                className="category__filter-link"
-                onClick={handleShowMoreBrand}
-                style={{ cursor: "pointer", color: "#ff5722" }}
-              >
-                {showMoreBrand ? "Thu gọn" : "Xem thêm"}
-              </p>
-            </li>
+            {brands.length > 5 && (
+              <li className="category__filter-item">
+                <p
+                  className="category__filter-link"
+                  onClick={handleShowMoreBrand}
+                  style={{ cursor: "pointer", color: "#ff5722" }}
+                >
+                  {showMoreBrand ? "Thu gọn" : "Xem thêm"}
+                </p>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -319,8 +321,11 @@ const Category = () => {
                 {categories.slice(0, 5).map((category) => (
                   <li className="category__filter-item" key={category._id}>
                     <a
-                      onClick={toggleDrawer}
-                      href="#category"
+                      onClick={() => {
+                        handleCategoryClick(category);
+                        toggleDrawer(); // Đóng drawer
+                      }}
+                      href={`#${category.categoriesName}`}
                       className="category__filter-link"
                     >
                       {category.categoriesName}
@@ -339,8 +344,11 @@ const Category = () => {
                   {categories.slice(5).map((category) => (
                     <li className="category__filter-item" key={category._id}>
                       <a
-                        onClick={toggleDrawer}
-                        href="#category"
+                        onClick={() => {
+                          handleCategoryClick(category);
+                          toggleDrawer(); // Đóng drawer
+                        }}
+                        href={`#${category.categoriesName}`}
                         className="category__filter-link"
                       >
                         {category.categoriesName}
@@ -367,9 +375,10 @@ const Category = () => {
                 {brands.slice(0, 5).map((brand) => (
                   <li className="category__filter-item" key={brand}>
                     <a
+                      href={`#${brand}`}
                       onClick={() => {
                         handleBrandClick(brand);
-                        toggleDrawer(); // Đóng drawer khi chọn thương hiệu
+                        toggleDrawer();
                       }}
                       className={`category__filter-link ${
                         selectedBrand === brand ? "active" : ""
@@ -391,27 +400,31 @@ const Category = () => {
                   {brands.slice(5).map((brand) => (
                     <li className="category__filter-item" key={brand}>
                       <a
+                        href={`#${brand}`}
                         onClick={() => {
                           handleBrandClick(brand);
-                          toggleDrawer(); // Đóng drawer khi chọn thương hiệu
+                          toggleDrawer();
                         }}
-                        href="#brand"
-                        className="category__filter-link"
+                        className={`category__filter-link ${
+                          selectedBrand === brand ? "active" : ""
+                        }`}
                       >
                         {brand}
                       </a>
                     </li>
                   ))}
                 </div>
-                <li className="category__filter-item">
-                  <p
-                    className="category__filter-link"
-                    onClick={handleShowMoreBrand}
-                    style={{ cursor: "pointer", color: "#ff5722" }}
-                  >
-                    {showMoreBrand ? "Thu gọn" : "Xem thêm"}
-                  </p>
-                </li>
+                {brands.length > 5 && ( // Chỉ hiển thị nút "Xem thêm" khi có hơn 5 thương hiệu
+                  <li className="category__filter-item">
+                    <p
+                      className="category__filter-link"
+                      onClick={handleShowMoreBrand}
+                      style={{ cursor: "pointer", color: "#ff5722" }}
+                    >
+                      {showMoreBrand ? "Thu gọn" : "Xem thêm"}
+                    </p>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
