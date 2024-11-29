@@ -445,7 +445,7 @@ const OrderList = () => {
                     Approval
                   </button>
                 )}
-                {selectedOrder.status !== "Canceled" && (
+                {selectedOrder.status == "Pending" && (
                   <button
                     onClick={() => handleRejectedOrder(selectedOrder.tradeId)}
                     className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700"

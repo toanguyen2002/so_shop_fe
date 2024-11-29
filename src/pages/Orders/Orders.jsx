@@ -294,7 +294,7 @@ const Orders = () => {
 
           {/* Orders List */}
           <div className="space-y-4 max-h-[475px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent">
-            {displayedOrders.map((order) => (
+            {displayedOrders?.map((order) => (
               <div
                 key={order.tradeId}
                 className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-4 border border-gray-200 rounded-lg"

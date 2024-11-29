@@ -41,3 +41,7 @@ export const getTradeBySellerAPI = (id, token) =>
 export const getTradeInYearAPI = (userId) => {
   return API.post("/trade/getTradeInYear", { userId });
 };
+
+export const getWalletByUserIdAPI = (user) => {
+  return API.post("/wallet/getById", { user });
+};

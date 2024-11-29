@@ -225,9 +225,7 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
         >
           Trước Đó
         </button>
-        <span className="p-2">
-          Trang {page} / {totalPages}
-        </span>
+        <span className="p-2">{page}</span>
         <button
           className="bg-gray-300 p-2 rounded ml-2"
           onClick={handleNextPage}

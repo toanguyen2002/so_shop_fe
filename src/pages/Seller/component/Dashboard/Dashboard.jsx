@@ -45,14 +45,13 @@ const Dashboard = () => {
         );
         if (fetchedOrders.status === 200) {
           const detailedOrders = await Promise.all(
-            fetchedOrders.data
-              .filter((order) => order.products.length === 1)
-              .filter(
+            fetchedOrders?.data
+              ?.filter(
                 (order) =>
                   (order.paymentMethod === "zalo" && order.payment === true) ||
                   order.paymentMethod === "cash"
               )
-              .map(async (order) => {
+              ?.map(async (order) => {
                 const productResponse = await getProductById(
                   order.products[0].productId
                 );

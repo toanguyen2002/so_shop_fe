@@ -345,10 +345,13 @@ const AddProduct = () => {
                 placeholder="Price"
                 className="w-full p-2 border rounded-lg"
                 value={classify.price}
+                min="0"
                 onChange={(e) =>
                   setClassifies((prev) =>
                     prev.map((item, i) =>
-                      i === index ? { ...item, price: e.target.value } : item
+                      i === index
+                        ? { ...item, price: Math.max(0, e.target.value) }
+                        : item
                     )
                   )
                 }
@@ -361,10 +364,13 @@ const AddProduct = () => {
                 placeholder="Stock"
                 className="w-full p-2 border rounded-lg"
                 value={classify.stock}
+                min="0"
                 onChange={(e) =>
                   setClassifies((prev) =>
                     prev.map((item, i) =>
-                      i === index ? { ...item, stock: e.target.value } : item
+                      i === index
+                        ? { ...item, stock: Math.max(e.target.value) }
+                        : item
                     )
                   )
                 }

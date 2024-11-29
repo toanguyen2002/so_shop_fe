@@ -25,6 +25,7 @@ import Loading from "../../components/Loading/Loading";
 import InformLogin from "../../components/Modal/InformLogin";
 import RelatedProducts from "../../components/Sections/RelatedProducts";
 import { useRef } from "react";
+import WarningModal from "../../components/Modal/WarningModal";
 
 const ProductDetail = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -50,6 +51,8 @@ const ProductDetail = () => {
   const visibleThumbnail = images;
   const [loading, setLoading] = useState(false);
   const [openInform, setOpenInform] = useState(false);
+  const [canPurchase, setCanPurchase] = useState(false);
+  const [showWarningUpdate, setShowWarningUpdate] = useState(false);
 
   const [itemPurchase, setItemPurchase] = useState({
     buyer: "",
@@ -175,6 +178,10 @@ const ProductDetail = () => {
     setIsModalOpen(false);
   };
 
+  const handleCloseWarning = () => {
+    setShowWarningUpdate(false);
+  };
+
   const handleNext = () => {
     if (startIndex < images.length - 3) {
       setStartIndex(startIndex + 1);
@@ -240,10 +247,26 @@ const ProductDetail = () => {
 
   const handleBuyNowClick = () => {
     if (!product) return;
+
     if (!user) {
       setOpenInform(true);
       return;
     }
+
+    if (
+      !user.name ||
+      !user.userName ||
+      !user.number ||
+      !user.address ||
+      !user.sex ||
+      !user.avata
+    ) {
+      setCanPurchase(false);
+      setShowWarningUpdate(true); // Hiển thị modal cảnh báo
+      return;
+    }
+    setCanPurchase(true);
+
     const item = {
       buyer: user._id,
       productId: product._id,
@@ -273,6 +296,9 @@ const ProductDetail = () => {
     <div className="product-detail-page" ref={topRef}>
       {!user && openInform && (
         <InformLogin isOpen={openInform} onClose={handleCloseInform} />
+      )}
+      {!canPurchase && (
+        <WarningModal isOpen={showWarningUpdate} onClose={handleCloseWarning} />
       )}
       {loading && <Loading />}
       {showNotification && (
@@ -359,7 +385,7 @@ const ProductDetail = () => {
           </div>
 
           <div className="detail-classifies">
-            {Object.keys(groupClassifies).map((key) => (
+            {Object.keys(groupClassifies)?.map((key) => (
               <button
                 key={key}
                 className={`key-btn ${selectedKey === key ? "selected" : ""}`}

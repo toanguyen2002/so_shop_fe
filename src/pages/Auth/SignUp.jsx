@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,12 +10,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useDispatch, useSelector } from "react-redux";
-import { register } from "../../actions/authAction";
-import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import Notification from "../../components/Notification/Notification";
 import { sendOTP } from "../../api/userAPI";
 
 const defaultTheme = createTheme();
@@ -26,78 +21,50 @@ function SignUp() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState("");
 
   const [errorMsg, setErrorMsg] = useState("");
-  const [showNotification, setShowNotification] = useState(false);
-  const [successMsg, setSuccessMsg] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const email = data.get("email");
+
+    if (!emailRegex.test(email)) {
+      setErrorMsg("Vui lòng nhập đúng định dạng email!");
+      return;
+    }
+
     if (data.get("password") !== data.get("confirmPassword")) {
-      setErrorMsg("Password and Confirm Password do not match");
+      setErrorMsg("Password và Confirm password không trùng khớp!");
       return;
     }
     const formData = {
-      userName: data.get("email"),
+      userName: email,
       password: data.get("password"),
     };
-    console.log("Form Data:", formData.userName);
 
     try {
       const response = await sendOTP({ userName: formData.userName });
-      console.log("Response:", response);
 
       if (response.data.code === 500) {
-        setErrorMsg("Email đã tồn tại trong hệ thống");
+        setErrorMsg("Email đã tồn tại trong hệ thống!");
       } else if (response.status === 201) {
         setIsOtpSent(true);
-        // setGeneratedOtp(response.data);
         navigate("/signup/verify-otp", {
           state: { formData, generatedOtp: response.data },
         });
       }
     } catch (error) {
       console.error("Error sending OTP:", error);
-      setErrorMsg("An error occurred while sending OTP");
+      setErrorMsg("Xuất hiện lỗi khi gửi xác thực OTP!");
     }
   };
 
-  useEffect(() => {
-    console.log("Generated OTP:", generatedOtp);
-  }, [generatedOtp]);
-
-  // useEffect(() => {
-  //   if (error && error.status) {
-  //     setErrorMsg(error.status);
-  //   } else {
-  //     setErrorMsg("");
-  //   }
-  // }, [error]);
-
-  // useEffect(() => {
-  //   // Navigate to the home page on successful registration
-  //   if (user && user.userName) {
-  //     setSuccessMsg("Đăng Ký Thành Công! Đang chuyển hướng đến trang chủ...");
-  //     setShowNotification(true);
-  //     setTimeout(() => {
-  //       navigate("/");
-  //     }, 3000);
-  //   }
-  // }, [user, navigate]);
-
   return (
     <ThemeProvider theme={defaultTheme}>
-      {/* {showNotification && (
-        <Notification
-          message={successMsg}
-          onClose={() => setShowNotification(false)}
-        />
-      )} */}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

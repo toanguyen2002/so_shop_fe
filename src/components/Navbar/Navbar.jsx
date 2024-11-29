@@ -21,6 +21,7 @@ import Loading from "../Loading/Loading";
 import useDebounce from "../Hook/useDebounce";
 import Notification from "../Notification/Notification";
 import { registerSellerAPI } from "../../api/userAPI";
+import { getWalletByUserIdAPI } from "../../api/tradeAPI";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -51,6 +52,10 @@ const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
   const [canRegister, setCanRegister] = useState(true); // Kiểm tra điều kiện đầy đủ thông tin
   const [showNotification, setShowNotification] = useState(false);
+  const [wallet, setWallet] = useState(null);
+
+  const inputRef = useRef(null);
+  const historyRef = useRef(null);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -92,41 +97,51 @@ const Navbar = () => {
     }
   }, [debouncedSearchTerm, isTyping, isFocused]);
 
-  const handleSearch = async (e) => {
-    if (!e || (e.type === "keydown" && e.keyCode !== 13)) return;
-    // console.log("Handling search for: ", searchTerm); // Log search term
-    const valueToSearch = e.target ? e.target.value : searchTerm;
-    if (valueToSearch) {
-      try {
-        console.log("Searching for: ", valueToSearch);
-        const response = await getProductsBySearching(valueToSearch);
-        const searchResults = response.data;
-        console.log("Search results: ", searchResults);
+  const handleSearch = async (searchValue) => {
+    const valueToSearch = searchValue.trim();
+    if (!valueToSearch) return; // Không tìm kiếm nếu giá trị rỗng
 
-        let updatedHistory = [...new Set([valueToSearch, ...searchHistory])];
-        setSearchHistory(updatedHistory);
-        localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
+    try {
+      const response = await getProductsBySearching(valueToSearch);
+      const searchResults = response.data;
 
-        setSearchTerm("");
-        setShowHistory(false);
+      // Cập nhật lịch sử tìm kiếm
+      const updatedHistory = [...new Set([valueToSearch, ...searchHistory])];
+      setSearchHistory(updatedHistory);
+      localStorage.setItem("searchHistory", JSON.stringify(updatedHistory));
 
-        navigate("/search-results", {
-          state: { searchResults, valueToSearch },
-        });
-      } catch (error) {
-        console.log("Error searching: ", error);
-      }
+      setSearchTerm(""); // Reset input
+      setShowHistory(false); // Ẩn lịch sử tìm kiếm
+
+      // Điều hướng đến trang kết quả
+      navigate("/search-results", {
+        state: { searchResults, valueToSearch },
+      });
+    } catch (error) {
+      console.log("Error searching: ", error);
     }
   };
 
-  const handleClickHistory = (term) => {
-    console.log("Clicked on history term: ", term); // Log clicked term
-    setSearchTerm(term); // Update the search term
-    setShowHistory(false);
-    setIsTyping(false); // Reset typing state
-    console.log("Updated searchTerm to: ", term); // Log updated search term
-    handleSearch({ type: "click", target: { value: term } });
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Kiểm tra nếu click nằm ngoài input và lịch sử
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target) &&
+        historyRef.current &&
+        !historyRef.current.contains(event.target)
+      ) {
+        setIsFocused(false); // Đóng focus input
+        setShowHistory(false); // Ẩn lịch sử tìm kiếm
+      }
+    };
+
+    // Lắng nghe sự kiện click trên toàn bộ document
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -191,7 +206,6 @@ const Navbar = () => {
           })
         );
         setProductData(productDataMap); // Lưu dữ liệu sản phẩm vào state
-        console.log("Product data:", productDataMap);
       } catch (error) {
         console.error("Error fetching product data:", error);
       }
@@ -270,18 +284,6 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, [showMenu]);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (e) => {
-  //     if (cartRef.current && !cartRef.current.contains(e.target)) {
-  //       setShowCart(false);
-  //     }
-  //   };
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cartRef.current && !cartRef.current.contains(event.target)) {
@@ -298,7 +300,6 @@ const Navbar = () => {
   }, []);
 
   const handleShowProfile = () => {
-    console.log("show profile");
     setShowProfile((prev) => !prev);
   };
 
@@ -317,10 +318,10 @@ const Navbar = () => {
   const handleRegisterSeller = async () => {
     if (canRegister) {
       const formData = {
-        id: user._id,
+        id: user?._id,
       };
       try {
-        const response = await registerSellerAPI(formData, user.access_token);
+        const response = await registerSellerAPI(formData, user?.access_token);
         console.log("Register seller response: ", response);
         setShowModal(false);
         setShowNotification(true);
@@ -329,6 +330,14 @@ const Navbar = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchWalletByUserId = async () => {
+      const response = await getWalletByUserIdAPI(user?._id);
+      setWallet(response.data);
+    };
+    fetchWalletByUserId();
+  }, []);
 
   return (
     <div className="navbar">
@@ -347,23 +356,27 @@ const Navbar = () => {
             </h2>
           </div>
           <div className="navbar-search">
-            {/* <div className="search-icon">
-              <SearchIcon />
-            </div> */}
             <input
+              ref={inputRef}
               value={searchTerm}
               onFocus={handleFocus}
               onChange={handleInputChange}
-              onKeyDown={handleSearch}
+              // onKeyDown={handleSearch}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch(searchTerm);
+              }}
               className="search-input"
               type="text"
               placeholder="Nhập tên sản phẩm bạn muốn tìm"
             />
-            <button className="search-btn" onClick={handleSearch}>
+            <button
+              className="search-btn"
+              onClick={() => handleSearch(searchTerm)}
+            >
               <SearchIcon />
             </button>
             {showHistory && (
-              <div className="search-history">
+              <div ref={historyRef} className="search-history">
                 {searchHistory.length === 0 ? (
                   <p className="history-item disabled" disabled>
                     Chưa có lịch sử tìm kiếm
@@ -387,19 +400,19 @@ const Navbar = () => {
                       <p
                         className="history-item"
                         key={index}
-                        onClick={() => handleClickHistory(term)}
+                        onClick={() => handleSearch(term)}
                       >
                         {term}
                       </p>
                     ))
                 ) : (
                   searchHistory
-                    .slice(0, 6) // Hiển thị 6 từ khóa mới nhất khi chưa gõ text
-                    .map((term, index) => (
+                    ?.slice(0, 6) // Hiển thị 6 từ khóa mới nhất khi chưa gõ text
+                    ?.map((term, index) => (
                       <p
                         className="history-item"
                         key={index}
-                        onClick={() => handleClickHistory(term)}
+                        onClick={() => handleSearch(term)}
                       >
                         {term}
                       </p>
@@ -425,7 +438,7 @@ const Navbar = () => {
                           Chưa có item nào trong giỏ hàng
                         </div>
                       ) : (
-                        cartItems.map((item) => {
+                        cartItems?.map((item) => {
                           const product = productData[item.productId];
                           const classify =
                             selectedClassifies[
@@ -492,7 +505,7 @@ const Navbar = () => {
                 >
                   <div className="cart-title">Sản Phẩm Mới Thêm</div>
                   <div className="cart-items-container">
-                    {cartItems.map((item) => {
+                    {cartItems?.map((item) => {
                       const product = productData[item.productId];
                       const classify =
                         selectedClassifies[
@@ -512,9 +525,6 @@ const Navbar = () => {
                               className="cart-item-img"
                             />
                             <div className="cart-item-info">
-                              <span className="cart-item-label">
-                                Combo khuyến mãi
-                              </span>
                               <span className="cart-item-name">
                                 {product?.productName || "Loading..."}
                               </span>
@@ -580,6 +590,17 @@ const Navbar = () => {
                         showProfile ? "show" : ""
                       }`}
                     >
+                      <a href="/">
+                        Số dư ví:{" "}
+                        <strong className="wallet">
+                          {wallet.balance >= 1000
+                            ? wallet.balance.toLocaleString("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              })
+                            : `${wallet.balance} đ`}
+                        </strong>
+                      </a>
                       <a href="/profile">Thông Tin Cá Nhân</a>
                       <a href="/orders">Đơn Hàng Của Bạn</a>
                       <a href="/cart">Giỏ Hàng</a>
@@ -619,24 +640,26 @@ const Navbar = () => {
         </div>
         {/* Search bar for mobile */}
         <div className="navbar-search-mobile">
-          {/* <div className="search-icon">
-            <SearchIcon />
-          </div> */}
           <input
+            ref={inputRef}
             value={searchTerm}
             onFocus={handleFocus}
             onChange={handleInputChange}
-            // onBlur={() => setShowHistory(false)}
-            onKeyDown={handleSearch}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch(searchTerm);
+            }}
             className="search-input"
             type="text"
             placeholder="Nhập tên sản phẩm bạn muốn tìm"
           />
-          <button className="search-btn" onClick={handleSearch}>
+          <button
+            className="search-btn"
+            onClick={() => handleSearch(searchTerm)}
+          >
             <SearchIcon />
           </button>
           {showHistory && (
-            <div className="search-history">
+            <div ref={historyRef} className="search-history">
               {searchHistory.length === 0 ? (
                 <p className="history-item">Chưa có lịch sử tìm kiếm</p>
               ) : isTyping ? (
@@ -658,19 +681,19 @@ const Navbar = () => {
                     <p
                       className="history-item"
                       key={index}
-                      onClick={() => handleClickHistory(term)}
+                      onClick={() => handleSearch(term)}
                     >
                       {term}
                     </p>
                   ))
               ) : (
                 searchHistory
-                  .slice(0, 6) // Hiển thị 6 từ khóa mới nhất khi chưa gõ text
-                  .map((term, index) => (
+                  ?.slice(0, 6) // Hiển thị 6 từ khóa mới nhất khi chưa gõ text
+                  ?.map((term, index) => (
                     <p
                       className="history-item"
                       key={index}
-                      onClick={() => handleClickHistory(term)}
+                      onClick={() => handleSearch(term)}
                     >
                       {term}
                     </p>

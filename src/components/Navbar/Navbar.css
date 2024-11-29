@@ -232,6 +232,10 @@
   width: 100%;
 }
 
+.wallet {
+  color: var(--color-primary);
+}
+
 .dropdown-profile {
   min-width: 200px;
   padding: 0;

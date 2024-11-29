@@ -468,12 +468,14 @@ const MultipleOrderList = () => {
                     Approval
                   </button>
                 )}
-                <button
-                  onClick={handleRejectedOrder}
-                  className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700"
-                >
-                  Cancel
-                </button>
+                {selectedOrder.status === "Pending" && (
+                  <button
+                    onClick={handleRejectedOrder}
+                    className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-700"
+                  >
+                    Cancel
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -63,8 +63,8 @@ const CategorySection = () => {
           </button>
           <div className="category-list">
             {categories
-              .slice(startIndex, startIndex + itemsPerPage)
-              .map((category) => {
+              ?.slice(startIndex, startIndex + itemsPerPage)
+              ?.map((category) => {
                 let imgSrc;
                 switch (category.categoriesName) {
                   case "Điện Da Dụng":

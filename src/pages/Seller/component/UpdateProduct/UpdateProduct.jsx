@@ -63,26 +63,6 @@ const UpdateProduct = ({ product, setActiveTab }) => {
     "Loại da",
     "Kiểu dáng",
     "Màu sắc",
-    "Chất liệu",
-    "Loại sản phẩm",
-    "Phân loại",
-    "Loại vải",
-    "Loại da",
-    "Kiểu dáng",
-    "Màu sắc",
-    "Chất liệu",
-    "Loại sản phẩm",
-    "Phân loại",
-    "Loại vải",
-    "Loại da",
-    "Kiểu dáng",
-    "Màu sắc",
-    "Chất liệu",
-    "Loại sản phẩm",
-    "Phân loại",
-    "Loại vải",
-    "Loại da",
-    "Kiểu dáng",
   ];
   const attributeSuggestions = [
     "Nơi sản xuất",
@@ -150,7 +130,7 @@ const UpdateProduct = ({ product, setActiveTab }) => {
 
   // Xóa ảnh mới (chỉ là preview chưa upload)
   const removeNewImage = (index) => {
-    const updatedPreviewImages = previewImages.filter((_, i) => i !== index);
+    const updatedPreviewImages = previewImages?.filter((_, i) => i !== index);
     const updatedNewImages = newImages.filter((_, i) => i !== index);
     setPreviewImages(updatedPreviewImages);
     setNewImages(updatedNewImages);
@@ -158,6 +138,35 @@ const UpdateProduct = ({ product, setActiveTab }) => {
 
   // Function to update product
   const handleUpdateProduct = async () => {
+    if (
+      !productDetails.productName ||
+      productDetails.productName.trim() === ""
+    ) {
+      setMessageProduct("Tên sản phẩm không được để trống.");
+      setShowMessagePro(true);
+      setTimeout(() => {
+        setShowMessagePro(false);
+      }, 1500);
+      return;
+    }
+
+    if (!productDetails.brand || productDetails.brand.trim() === "") {
+      setMessageProduct("Thương hiệu không được để trống.");
+      setShowMessagePro(true);
+      setTimeout(() => {
+        setShowMessagePro(false);
+      }, 1500);
+      return;
+    }
+
+    if (newImages.length === 0 && oldImages.length === 0) {
+      setMessageProduct("Ảnh sản phẩm không được để trống.");
+      setShowMessagePro(true);
+      setTimeout(() => {
+        setShowMessagePro(false);
+      }, 1500);
+      return;
+    }
     setLoading(true);
     try {
       const formData = new FormData();
@@ -167,7 +176,7 @@ const UpdateProduct = ({ product, setActiveTab }) => {
 
       // Call API to upload new images to S3
       const response = await uploadFile(formData);
-      const imageUrls = response.data;
+      const imageUrls = response?.data;
 
       const updatedImages = [...oldImages, ...imageUrls];
 
@@ -209,6 +218,24 @@ const UpdateProduct = ({ product, setActiveTab }) => {
   // Function to update classifies
   const handleUpdateClassifies = async () => {
     setLoading(true);
+    for (const classify of classifies) {
+      if (
+        !classify.key ||
+        !classify.value ||
+        classify.price === undefined ||
+        classify.price < 0
+      ) {
+        setMessageClassify(
+          "Vui lòng nhập đầy đủ thông tin cho tất cả các mục phân loại."
+        );
+        setShowMessageClassify(true);
+        setTimeout(() => {
+          setShowMessageClassify(false);
+        }, 2000);
+        setLoading(false);
+        return;
+      }
+    }
     try {
       for (let i = 0; i < classifies.length; i++) {
         const newStock = classifies[i].newStock || 0;
@@ -247,6 +274,20 @@ const UpdateProduct = ({ product, setActiveTab }) => {
   // Function to update attributes
   const handleUpdateAttributes = async () => {
     setLoading(true);
+    for (const attribute of attributes) {
+      if (!attribute.key || !attribute.value) {
+        setMessageAttribute(
+          "Vui lòng nhập đầy đủ thông tin cho tất cả các mục thuộc tính."
+        );
+        setShowMessageAttri(true);
+        setTimeout(() => {
+          setShowMessageAttri(false);
+        }, 2000);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       for (let i = 0; i < attributes.length; i++) {
         const attributeData = {
@@ -283,6 +324,20 @@ const UpdateProduct = ({ product, setActiveTab }) => {
   // Function to update descriptions
   const handleUpdateDescriptions = async () => {
     setLoading(true);
+    for (const decription of descriptions) {
+      if (!decription.key || !decription.value) {
+        setMessageDescription(
+          "Vui lòng nhập đầy đủ thông tin cho tất cả các mục mô tả."
+        );
+        setShowMessageDes(true);
+        setTimeout(() => {
+          setShowMessageDes(false);
+        }, 2000);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       for (let i = 0; i < descriptions.length; i++) {
         const descriptionData = {
@@ -465,7 +520,13 @@ const UpdateProduct = ({ product, setActiveTab }) => {
           Cập Nhật Sản Phẩm
         </button>
         {showMessagePro && (
-          <div className="mt-3 bg-green-500 text-white px-4 py-2 rounded">
+          <div
+            className={`mt-3 px-4 py-2 rounded ${
+              messageProduct.includes("thành công")
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
             {messageProduct}
           </div>
         )}
@@ -521,11 +582,15 @@ const UpdateProduct = ({ product, setActiveTab }) => {
               <input
                 type="number"
                 value={classify.price}
+                min="0"
                 onChange={(e) =>
                   setClassifies((prev) =>
                     prev.map((item, i) =>
                       i === index
-                        ? { ...item, price: Number(e.target.value) }
+                        ? {
+                            ...item,
+                            price: Math.max(0, Number(e.target.value)),
+                          }
                         : item
                     )
                   )
@@ -577,7 +642,13 @@ const UpdateProduct = ({ product, setActiveTab }) => {
           Cập Nhật Phân Loại
         </button>
         {showMessageClassify && (
-          <div className="mt-3 bg-green-500 text-white px-4 py-2 rounded">
+          <div
+            className={`mt-3 text-white px-4 py-2 rounded ${
+              messageClassify.includes("thành công")
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
             {messageClassify}
           </div>
         )}
@@ -647,7 +718,13 @@ const UpdateProduct = ({ product, setActiveTab }) => {
           Cập Nhật Thuộc Tính
         </button>
         {showMessageAttri && (
-          <div className="mt-3 bg-green-500 text-white px-4 py-2 rounded">
+          <div
+            className={`mt-3 text-white px-4 py-2 rounded ${
+              messageAttribute.includes("thành công")
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
             {messageAttribute}
           </div>
         )}
@@ -717,7 +794,13 @@ const UpdateProduct = ({ product, setActiveTab }) => {
           Cập Nhật Mô Tả
         </button>
         {showMessageDes && (
-          <div className="mt-3 bg-green-500 text-white px-4 py-2 rounded">
+          <div
+            className={`mt-3 text-white px-4 py-2 rounded ${
+              messageDescription.includes("thành công")
+                ? "bg-green-500 text-white"
+                : "bg-red-500 text-white"
+            }`}
+          >
             {messageDescription}
           </div>
         )}
