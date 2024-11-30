@@ -104,6 +104,10 @@ const ProductDetail = () => {
         setLoading(false);
       }
     };
+    setQuantity(1);
+    setSelectedKey("");
+    setSelectedValue("");
+    setSelectedOptions({});
     fetchProduct();
   }, [id]);
 
@@ -202,6 +206,7 @@ const ProductDetail = () => {
   const handleValueChange = (value) => {
     setSelectedValue(value);
     setSelectedOptions(value);
+    setQuantity(1);
   };
 
   const handleMouseEnter = (image) => {

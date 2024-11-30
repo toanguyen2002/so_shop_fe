@@ -54,7 +54,7 @@ const TopSellerSection = () => {
     <div className="brand-section">
       <div style={{ padding: 20 }}>
         <div className="title-header">
-          <h3 className="h3-title">Thương Hiệu Nổi Bật</h3>
+          <h3 className="h3-title">Người Bán Nổi Bật</h3>
         </div>
         <div className="brand-container">
           <button
