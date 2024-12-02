@@ -45,14 +45,32 @@ function SignIn() {
       userName: data.get("email"),
       password: data.get("password"),
     };
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (formData.userName.length === 0) {
+      setErrorMsg("Vui lòng nhập địa chỉ Email.");
+      return;
+    }
+
+    if (!emailRegex.test(formData.userName)) {
+      setErrorMsg("Vui lòng nhập đúng định dạng Email.");
+      return;
+    }
+
+    if (formData.password.length < 4) {
+      setErrorMsg("Mật khẩu phải có ít nhất 4 ký tự.");
+      return;
+    }
+
     dispatch(login(formData));
 
-    console.log({
-      userName: data.get("email"),
-      password: data.get("password"),
-      error,
-      user,
-    });
+    // console.log({
+    //   userName: data.get("email"),
+    //   password: data.get("password"),
+    //   error,
+    //   user,
+    // });
   };
 
   useEffect(() => {
@@ -81,7 +99,7 @@ function SignIn() {
       setShowNotification(true); // Show notification on success
       setShowForgotPassword(false); // Return to sign-in form
     } catch (error) {
-      setErrorMsg("Reset Password thất bại. Vui lòng thử lại.");
+      setErrorMsg("Reset mật khẩu thất bại. Vui lòng thử lại.");
     }
   };
 
@@ -89,7 +107,7 @@ function SignIn() {
     <ThemeProvider theme={defaultTheme}>
       {showNotification && (
         <Notification
-          message="Reset Password thành công. Vui lòng kiểm tra Email của bạn."
+          message="Reset mật khẩu thành công. Vui lòng kiểm tra Email của bạn."
           onClose={() => setShowNotification(false)}
         />
       )}
@@ -107,7 +125,7 @@ function SignIn() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            {showForgotPassword ? "Forgot Password" : "Sign in"}
+            {showForgotPassword ? "Quên Mật Khẩu" : "Đăng Nhập"}
           </Typography>
           {showForgotPassword ? (
             <Box
@@ -121,7 +139,7 @@ function SignIn() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Địa chỉ Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -132,14 +150,14 @@ function SignIn() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Reset Password
+                Reset Mật Khẩu
               </Button>
               <Link
                 variant="body2"
                 onClick={() => setShowForgotPassword(false)}
                 style={{ cursor: "pointer" }}
               >
-                Back to Sign In
+                Trở về đăng nhập
               </Link>
             </Box>
           ) : (
@@ -154,7 +172,7 @@ function SignIn() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Địa chỉ Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -164,7 +182,7 @@ function SignIn() {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Mật khẩu"
                 type={showPassword ? "text" : "password"}
                 id="password"
                 autoComplete="current-password"
@@ -186,11 +204,6 @@ function SignIn() {
                   ),
                 }}
               />
-              {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
-
               {errorMsg && (
                 <Typography variant="body2" color="error">
                   {errorMsg}
@@ -203,7 +216,7 @@ function SignIn() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                {loading ? "Loading..." : "Sign In"}
+                {loading ? "Loading..." : "Đăng nhập"}
               </Button>
               <Grid container>
                 <Grid item xs>
@@ -212,11 +225,11 @@ function SignIn() {
                     onClick={() => setShowForgotPassword(true)}
                     style={{ cursor: "pointer" }}
                   >
-                    Forgot password?
+                    Quên mật khẩu?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/signup">{"Don't have an account? Sign Up"}</Link>
+                  <Link href="/signup">{"Không có tài khoản? Đăng ký"}</Link>
                 </Grid>
               </Grid>
             </Box>

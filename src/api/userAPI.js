@@ -6,6 +6,18 @@ const API = axios.create({ baseURL });
 export const loginAPI = (formData) => API.post("/users/login", formData);
 export const registerAPI = (formData) => API.post("/users/register", formData);
 export const resetPassAPI = (formData) => API.post("/users/reset", formData);
+export const changePassAPI = (formData, token) => {
+  return API.post(
+    "/users/changePass",
+    {
+      userName: formData.userName,
+      passW: formData.passW,
+    },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};
 
 export const updateUserAPI = (formData, token) => {
   return API.post("/users/update", formData, {

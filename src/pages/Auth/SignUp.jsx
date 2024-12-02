@@ -38,7 +38,7 @@ function SignUp() {
     }
 
     if (data.get("password") !== data.get("confirmPassword")) {
-      setErrorMsg("Password và Confirm password không trùng khớp!");
+      setErrorMsg("Mật khẩu và Xác nhận mật khẩu không trùng khớp!");
       return;
     }
     const formData = {
@@ -79,7 +79,7 @@ function SignUp() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign up
+            Đăng ký
           </Typography>
           <Box
             component="form"
@@ -93,7 +93,7 @@ function SignUp() {
                   required
                   fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Địa chỉ Email"
                   name="email"
                   autoComplete="email"
                 />
@@ -103,7 +103,7 @@ function SignUp() {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="Mật khẩu"
                   type="password"
                   id="password"
                 />
@@ -113,13 +113,17 @@ function SignUp() {
                   required
                   fullWidth
                   name="confirmPassword"
-                  label="Confirm Password"
+                  label="Xác nhận mật khẩu"
                   type="password"
                   id="confirmPassword"
                 />
               </Grid>
               {errorMsg && (
-                <Typography variant="body2" color="error">
+                <Typography
+                  variant="body2"
+                  color="error"
+                  sx={{ marginTop: 1, marginLeft: 2 }}
+                >
                   {errorMsg}
                 </Typography>
               )}
@@ -130,12 +134,12 @@ function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Send OTP
+              Gửi OTP
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/signin" variant="body2">
-                  Already have an account? Sign in
+                  Đã có tài khoản? Đăng nhập
                 </Link>
               </Grid>
             </Grid>

@@ -16,6 +16,7 @@ import CatePage from "./pages/CatePage/CatePage";
 import TopSeller from "./pages/TopSeller/TopSeller";
 import AdminHomePage from "./pages/Admin/AdminHomePage/AdminHomePage";
 import Help from "./pages/Help/Help";
+import ChangePassWord from "./pages/Auth/ChangePassWord";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/changepass" element={<ChangePassWord />} />
         <Route path="/" element={<Home />} />
         <Route path="/help" element={<Help />} />
         <Route path="/contact" element={<Contact />} />

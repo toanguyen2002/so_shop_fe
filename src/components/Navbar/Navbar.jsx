@@ -604,6 +604,7 @@ const Navbar = () => {
                       <a href="/profile">Thông Tin Cá Nhân</a>
                       <a href="/orders">Đơn Hàng Của Bạn</a>
                       <a href="/cart">Giỏ Hàng</a>
+                      <a href="/changepass">Đổi mật khẩu</a>
                       <a onClick={handleLogout}>Đăng Xuất</a>
                     </div>
                   )}
