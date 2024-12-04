@@ -45,3 +45,13 @@ export const getTradeInYearAPI = (userId) => {
 export const getWalletByUserIdAPI = (user) => {
   return API.post("/wallet/getById", { user });
 };
+
+export const gettradeDayInMonthAPI = (userId, month, year, token) => {
+  return API.post(
+    "/trade/gettradeDayInMonth",
+    { userId, month, year },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};

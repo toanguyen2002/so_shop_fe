@@ -62,3 +62,5 @@ export const updateClassifyAPI = (classify, token) =>
   API.post("/classify/update", classify, {
     headers: { Authorization: `Bearer ${token}` },
   });
+
+export const getProductByClassifyAPI = (id) => API.get(`/classify/prds/${id}`);
