@@ -533,14 +533,8 @@ const Cart = () => {
                 </div>
 
                 <div className="mb-4">
-                  <h3 className="font-medium">Địa chỉ giao hàng</h3>
-                  <input
-                    type="text"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="Nhập địa chỉ giao hàng"
-                    className="w-full p-2 border border-gray-300 rounded-lg"
-                  />
+                  <span className="font-medium">Địa chỉ giao hàng:</span>
+                  <p className="text-gray-600">{user.address}</p>
                 </div>
 
                 <div className="mb-4">

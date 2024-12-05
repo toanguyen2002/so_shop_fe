@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../actions/authAction";
-import { resetPassAPI } from "../../api/userAPI";
+import { resetPassAPI, sendOTPToResetPassAPI } from "../../api/userAPI";
 import Notification from "../../components/Notification/Notification";
 
 const defaultTheme = createTheme();
@@ -37,6 +37,7 @@ function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, loading, error } = useSelector((state) => state.auth);
+  const [load, setLoad] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -64,13 +65,7 @@ function SignIn() {
     }
 
     dispatch(login(formData));
-
-    // console.log({
-    //   userName: data.get("email"),
-    //   password: data.get("password"),
-    //   error,
-    //   user,
-    // });
+    setErrorMsg("");
   };
 
   useEffect(() => {
@@ -89,17 +84,28 @@ function SignIn() {
   }, [user, navigate]);
 
   const handleSubmitForgotPassword = async (event) => {
+    setLoad(true);
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const formData = {
       userName: data.get("email"),
     };
+    if (formData.userName.length === 0) {
+      setErrorMsg("Vui lòng nhập tài khoản Email");
+      return;
+    }
     try {
-      await resetPassAPI(formData);
-      setShowNotification(true); // Show notification on success
-      setShowForgotPassword(false); // Return to sign-in form
+      // await resetPassAPI(formData);
+      // setShowNotification(true);
+      // setShowForgotPassword(false); // Return to sign-in form
+      const otpresponse = await sendOTPToResetPassAPI(formData.userName);
+      navigate("/verify-account", {
+        state: { userName: formData.userName, otp: otpresponse?.data?.OTP },
+      });
     } catch (error) {
       setErrorMsg("Reset mật khẩu thất bại. Vui lòng thử lại.");
+    } finally {
+      setLoad(false);
     }
   };
 
@@ -150,7 +156,7 @@ function SignIn() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Reset Mật Khẩu
+                {load ? "Loading..." : "Gửi OTP"}
               </Button>
               <Link
                 variant="body2"
@@ -222,7 +228,10 @@ function SignIn() {
                 <Grid item xs>
                   <Link
                     variant="body2"
-                    onClick={() => setShowForgotPassword(true)}
+                    onClick={() => {
+                      setShowForgotPassword(true);
+                      setErrorMsg("");
+                    }}
                     style={{ cursor: "pointer" }}
                   >
                     Quên mật khẩu?

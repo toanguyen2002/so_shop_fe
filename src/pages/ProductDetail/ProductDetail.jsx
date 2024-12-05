@@ -407,7 +407,7 @@ const ProductDetail = () => {
                   key={classify._id}
                   className={`value-btn ${
                     selectedValue._id === classify._id ? "selected" : ""
-                  }`}
+                  } ${classify.stock <= 0 ? "disable-btn" : ""}`}
                   onClick={() =>
                     classify.stock > 0 && handleValueChange(classify)
                   } // Only allow selection if stock > 0

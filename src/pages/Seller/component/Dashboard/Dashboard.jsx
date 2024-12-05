@@ -378,19 +378,20 @@ const Dashboard = () => {
         Thống Kê Trong Năm {selectedYear}
       </h2>
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-yellow-500 text-white text-center rounded-lg">
-          <h3>Đơn hàng đang chờ</h3>
+        <div className="p-4 border-2 bg-white border-yellow-500 text-yellow-500 text-center rounded-lg transform transition-all hover:scale-105">
+          <h3 className="font-medium">Đơn hàng đang chờ</h3>
           <CountUp end={orderCounts.pending} duration={2} />
         </div>
-        <div className="p-4 bg-red-500 text-white text-center rounded-lg">
-          <h3>Đơn hàng đã huỷ</h3>
+        <div className="p-4 border-2 bg-white border-red-500 text-red-500 text-center rounded-lg transform transition-all hover:scale-105">
+          <h3 className="font-medium">Đơn hàng đã huỷ</h3>
           <CountUp end={orderCounts.canceled} duration={2} />
         </div>
-        <div className="p-4 bg-green-500 text-white text-center rounded-lg">
-          <h3>Đơn hàng đã chấp nhận</h3>
+        <div className="p-4 border-2 bg-white border-green-500 text-green-500 text-center rounded-lg transform transition-all hover:scale-105">
+          <h3 className="font-medium">Đơn hàng đã chấp nhận</h3>
           <CountUp end={orderCounts.approved} duration={2} />
         </div>
       </div>
+
       {/* Monthly Trade Data */}
       <div className="flex space-x-4">
         <div className="w-2/3 bg-white p-4 rounded-lg shadow-md">
@@ -413,26 +414,32 @@ const Dashboard = () => {
 
       {/* Top 3 Best-Selling Products */}
       <div className="mt-8">
-        <h2 className="text-2xl font-medium mb-4">Sản Phẩm Bán Chạy Top Đầu</h2>
+        <h2 className="text-2xl font-medium mb-4">
+          Sản Phẩm Bán Chạy Top Đầu Tháng {selectedMonth}
+        </h2>
         <div className="grid grid-cols-3 gap-4">
           {topProducts && topProducts.length > 0 ? (
             topProducts?.map((product, index) => (
               <div
                 key={product.classifyId}
-                className={`flex flex-col items-center p-6 bg-white rounded-lg shadow-md transform transition-all hover:scale-105 ${
-                  index === 0
-                    ? "bg-yellow-500"
-                    : index === 1
-                    ? "bg-blue-500"
-                    : "bg-green-500"
-                }`}
+                className="flex flex-col items-center p-6 bg-white rounded-lg shadow-md transform transition-all hover:scale-105"
               >
-                <h3 className="text-2xl font-semibold">{`Hạng ${
-                  index + 1
-                }`}</h3>
+                <h3
+                  className={`text-2xl font-semibold ${
+                    index === 0
+                      ? "text-yellow-500"
+                      : index === 1
+                      ? "text-blue-500"
+                      : index === 2
+                      ? "text-green-500"
+                      : "text-gray-800"
+                  }`}
+                >
+                  {`Hạng ${index + 1}`}
+                </h3>
                 <p className="text-lg mt-2">{product.productName}</p>
                 <p className="text-xl font-medium mt-2">
-                  {product.totalProducts} sản phẩm
+                  <CountUp end={product.totalProducts} duration={2} /> sản phẩm
                 </p>
               </div>
             ))

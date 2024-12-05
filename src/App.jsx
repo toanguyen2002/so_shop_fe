@@ -17,6 +17,8 @@ import TopSeller from "./pages/TopSeller/TopSeller";
 import AdminHomePage from "./pages/Admin/AdminHomePage/AdminHomePage";
 import Help from "./pages/Help/Help";
 import ChangePassWord from "./pages/Auth/ChangePassWord";
+import VerifyAccount from "./pages/Auth/VerifyAccount";
+import ForgotPassWord from "./pages/Auth/ForgotPassWord";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/changepass" element={<ChangePassWord />} />
+        <Route path="/verify-account" element={<VerifyAccount />} />
+        <Route path="/forgot-password" element={<ForgotPassWord />} />
         <Route path="/" element={<Home />} />
         <Route path="/help" element={<Help />} />
         <Route path="/contact" element={<Contact />} />

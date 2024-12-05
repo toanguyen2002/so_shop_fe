@@ -125,11 +125,13 @@ const ProfileSection = ({ props }) => {
     event.preventDefault();
     setLoading(true);
 
-    // if (user.name === "" || user.phone === "" || user.address === "") {
-    //   alert("Vui lòng nhập đầy đủ thông tin");
-    //   setLoading(false);
-    //   return;
-    // }
+    const regexNumber = /^\d{10}$/;
+
+    if (phoneNumber && !regexNumber.test(phoneNumber)) {
+      alert("Vui lòng nhập số điện thoại hợp lệ");
+      setLoading(false);
+      return;
+    }
 
     if (isEditAddress && addressDetail === "") {
       alert("Vui lòng nhập địa chỉ chi tiết");

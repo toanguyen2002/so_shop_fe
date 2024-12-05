@@ -158,6 +158,10 @@
   border-color: var(--color-tertiary);
 }
 
+.value-btn.disable-btn {
+  opacity: 0.6;
+}
+
 .detail-banner {
   display: flex;
   flex-direction: column;

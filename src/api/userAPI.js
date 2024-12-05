@@ -6,6 +6,7 @@ const API = axios.create({ baseURL });
 export const loginAPI = (formData) => API.post("/users/login", formData);
 export const registerAPI = (formData) => API.post("/users/register", formData);
 export const resetPassAPI = (formData) => API.post("/users/reset", formData);
+
 export const changePassAPI = (formData, token) => {
   return API.post(
     "/users/changePass",
@@ -59,4 +60,8 @@ export const getAllRegisterSellerAPI = (token) => {
   return API.get("/users/admin/getSeller", {
     headers: { Authorization: `Bearer ${token}` },
   });
+};
+
+export const sendOTPToResetPassAPI = (userName) => {
+  return API.post("/users/createOTP", { userName });
 };
