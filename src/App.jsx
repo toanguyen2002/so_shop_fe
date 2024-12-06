@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Contact from "./pages/Contact/Contact";
 import Products from "./pages/Products/Products";
@@ -21,6 +21,32 @@ import VerifyAccount from "./pages/Auth/VerifyAccount";
 import ForgotPassWord from "./pages/Auth/ForgotPassWord";
 
 function App() {
+  if ("AmbientLightSensor" in window) {
+    try {
+      const sensor = new AmbientLightSensor();
+
+      sensor.addEventListener("reading", () => {
+        console.log(`Ambient light level: ${sensor.illuminance} lux`);
+        if (sensor.illuminance < 50) {
+          document.body.style.backgroundColor = "black";
+          document.body.style.color = "white";
+        } else {
+          document.body.style.backgroundColor = "white";
+          document.body.style.color = "black";
+        }
+      });
+
+      sensor.addEventListener("error", (event) => {
+        console.error("Sensor error:", event.error.name, event.error.message);
+      });
+
+      sensor.start();
+    } catch (error) {
+      console.error("Ambient Light Sensor not supported:", error);
+    }
+  } else {
+    console.log("Ambient Light Sensor API is not supported by your browser.");
+  }
   return (
     <div>
       <Routes>
