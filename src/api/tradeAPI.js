@@ -55,3 +55,8 @@ export const gettradeDayInMonthAPI = (userId, month, year, token) => {
     }
   );
 };
+
+export const getUpdateTradeStatusAPI = (trade, token) =>
+  API.post("/trade/updateStatus", trade, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

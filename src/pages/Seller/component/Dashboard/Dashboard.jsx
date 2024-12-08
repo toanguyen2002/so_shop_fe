@@ -10,7 +10,8 @@ import {
 } from "../../../../api/productAPI";
 import { useSelector } from "react-redux";
 import CountUp from "react-countup";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { Filler } from "chart.js";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -20,16 +21,22 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  LineElement,
+  PointElement,
 } from "chart.js";
+import { getCheckCartAPI } from "../../../../api/cartAPI";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  Filler
 );
 
 const Dashboard = () => {
@@ -44,6 +51,24 @@ const Dashboard = () => {
 
   const [groupedData, setGroupedData] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+
+  const [topProductsData, setTopProductsData] = useState({});
+
+  const [bottomProductsData, setBottomProductsData] = useState({});
+
+  const [chartCateData, setChartCateData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "Total Products by Category",
+        data: [],
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  });
 
   useEffect(() => {
     const fetchOrdersWithDetails = async () => {
@@ -273,6 +298,109 @@ const Dashboard = () => {
     { pending: 0, canceled: 0, approved: 0 }
   );
 
+  // Dữ liệu cho biểu đồ Line
+  useEffect(() => {
+    // Fetch the data
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await getCheckCartAPI();
+        const data = response.data;
+
+        // Process data for the chart
+        const groupedData = data.reduce((acc, item) => {
+          if (!acc[item.categoriesName]) {
+            acc[item.categoriesName] = 0;
+          }
+          acc[item.categoriesName] += item.totalNumberProducts;
+          return acc;
+        }, {});
+
+        const labels = Object.keys(groupedData); // x-axis labels
+        const values = Object.values(groupedData); // y-axis values
+
+        // Sắp xếp dữ liệu theo totalNumberProducts để lấy top và bottom 20 sản phẩm
+        const sortedData = [...data].sort(
+          (a, b) => b.totalNumberProducts - a.totalNumberProducts
+        );
+
+        const top10Products = sortedData.slice(0, 10);
+        const bottom10Products = sortedData.slice(-10);
+
+        // Lọc top 10 sản phẩm có totalNumberProducts lớn nhất
+        const topLabels = top10Products.map((item) => item.productName);
+        const topValues = top10Products.map((item) => item.totalNumberProducts);
+
+        // Lọc bottom 10 sản phẩm có totalNumberProducts thấp nhất
+        const bottomLabels = bottom10Products.map((item) => item.productName);
+        const bottomValues = bottom10Products.map(
+          (item) => item.totalNumberProducts
+        );
+
+        setChartCateData({
+          labels,
+          datasets: [
+            {
+              label: "Total Products by Category",
+              data: values,
+              borderColor: "rgba(75,192,192,1)",
+              backgroundColor: labels.map(
+                (_, index) =>
+                  `rgba(${(index * 100) % 255}, ${(index * 70) % 255}, ${
+                    (index * 50) % 255
+                  }, 0.6)`
+              ), // Dynamically set backgroundColor
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        });
+
+        setTopProductsData({
+          labels: topLabels,
+          datasets: [
+            {
+              label: "Top 10 Products by Total Number",
+              data: topValues,
+              backgroundColor: topLabels.map(
+                (_, index) =>
+                  `rgba(${(index * 100) % 255}, ${(index * 70) % 255}, ${
+                    (index * 50) % 255
+                  }, 0.6)`
+              ),
+              borderColor: "rgba(75,192,192,1)",
+              borderWidth: 1,
+            },
+          ],
+        });
+
+        setBottomProductsData({
+          labels: bottomLabels,
+          datasets: [
+            {
+              label: "Bottom 10 Products by Total Number",
+              data: bottomValues,
+              backgroundColor: bottomLabels.map(
+                (_, index) =>
+                  `rgba(${(index * 100) % 255}, ${(index * 50) % 255}, ${
+                    (index * 80) % 255
+                  }, 0.6)`
+              ),
+              borderColor: "rgba(75,192,192,1)",
+              borderWidth: 1,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const chartData = {
     labels: filteredTradeData?.map((data) => `Month ${data.month}`),
     datasets: [
@@ -437,7 +565,9 @@ const Dashboard = () => {
                 >
                   {`Hạng ${index + 1}`}
                 </h3>
-                <p className="text-lg mt-2">{product.productName}</p>
+                <p className="text-lg mt-2 line-clamp-2">
+                  {product.productName}
+                </p>
                 <p className="text-xl font-medium mt-2">
                   <CountUp end={product.totalProducts} duration={2} /> sản phẩm
                 </p>
@@ -484,6 +614,51 @@ const Dashboard = () => {
             />
           )}
         </div>
+      </div>
+
+      <div className="text-center p-4 mt-8">
+        <h1 className="text-3xl font-bold">Dữ Liệu Toàn Hệ Thống</h1>
+      </div>
+
+      {/* Cate Chart */}
+      <div className=" bg-white p-4 rounded-lg shadow-md">
+        <h2 className="text-xl font-bold mb-4">
+          Số Lượng Sản Phẩm Theo Danh Mục
+        </h2>
+        {loading ? (
+          <p className="text-center text-gray-600">Loading...</p>
+        ) : (
+          chartCateData.labels.length > 0 && (
+            <Bar
+              data={chartCateData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: "top" }, // Hiển thị chú thích
+                  title: {
+                    display: true,
+                    text: "Số Lượng Sản Phẩm Theo Danh Mục", // Đổi tiêu đề biểu đồ
+                  },
+                },
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Danh Mục Sản Phẩm", // Tiêu đề trục X
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Số Lượng Sản Phẩm", // Tiêu đề trục Y
+                    },
+                    beginAtZero: true, // Bắt đầu từ 0
+                  },
+                },
+              }}
+            />
+          )
+        )}
       </div>
     </div>
   );

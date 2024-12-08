@@ -11,6 +11,7 @@ import {
   addTradeAPI,
   cancelTradeAPI,
   getTradeAPI,
+  getUpdateTradeStatusAPI,
   tradePaymentAPI,
 } from "../../api/tradeAPI";
 import { useSelector } from "react-redux";
@@ -108,23 +109,34 @@ const Orders = () => {
   }, [orders]);
 
   const paidOrders = orders
-    .filter((order) => order.payment === true && !order.isCancel)
+    .filter(
+      (order) => order.payment === true && !order.isCancel && !order.tradeStatus
+    )
     .sort((a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)); // Sắp xếp từ mới nhất đến cũ nhất
 
   const unpaidOrders = orders
-    .filter((order) => order.payment === false && !order.isCancel)
+    .filter(
+      (order) =>
+        order.payment === false && !order.isCancel && !order.tradeStatus
+    )
     .sort((a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)); // Sắp xếp từ mới nhất đến cũ nhất
 
   const canceledOrders = orders
-    .filter((order) => order.isCancel === true)
+    .filter((order) => order.isCancel === true && !order.tradeStatus)
     .sort((a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)); // Sắp xếp từ mới nhất đến cũ nhất
+
+  const completed = orders
+    .filter((order) => order.tradeStatus === true && !order.isCancel)
+    .sort((a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)); // Sắp xếp từ
 
   const displayedOrders =
     activeTab === "paid"
       ? paidOrders
       : activeTab === "unpaid"
       ? unpaidOrders
-      : canceledOrders;
+      : activeTab === "canceled"
+      ? canceledOrders
+      : completed;
 
   const handleOrderDetails = (order) => {
     console.log("Viewing order details", order);
@@ -181,6 +193,23 @@ const Orders = () => {
     }
   };
 
+  const handleRecievedOrder = async (tradeId) => {
+    setLoading(true);
+    try {
+      const response = await getUpdateTradeStatusAPI(
+        { tradeId },
+        user.access_token
+      );
+      console.log(response);
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+    } finally {
+      setLoading(false);
+      setModalOpen(false);
+      window.location.reload();
+    }
+  };
+
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const handleSortClick = () => {
     setDropdownOpen(!dropdownOpen);
@@ -226,6 +255,16 @@ const Orders = () => {
             >
               Đã Huỷ
             </div>
+            <div
+              onClick={() => setActiveTab("completed")}
+              className={`py-3 px-6 cursor-pointer  whitespace-nowrap hidden md:inline ${
+                activeTab === "completed"
+                  ? "border-b-4 border-blue-500 text-blue-500"
+                  : "text-gray-600"
+              }`}
+            >
+              Hoàn Thành
+            </div>
 
             {/* Hiện khi reponsive là md trở xuống, để hiển thị ra option được chọn trong dropdown */}
             <div className="flex justify-between items-center w-full">
@@ -241,6 +280,7 @@ const Orders = () => {
                 {activeTab === "paid" && "Đã Thanh Toán"}
                 {activeTab === "unpaid" && "Chưa Thanh Toán"}
                 {activeTab === "canceled" && "Đã Huỷ"}
+                {activeTab === "completed" && "Hoàn Thành"}
               </div>
 
               {/* reponsive dropdown for sort */}
@@ -285,6 +325,17 @@ const Orders = () => {
                       }`}
                     >
                       Đã Huỷ
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActiveTab("completed");
+                        setDropdownOpen(false);
+                      }}
+                      className={`py-2 px-4 cursor-pointer hover:bg-blue-500 hover:text-white ${
+                        activeTab === "completed" ? "bg-blue-100" : ""
+                      }`}
+                    >
+                      Hoàn Thành
                     </div>
                   </div>
                 )}
@@ -349,11 +400,20 @@ const Orders = () => {
                 {/* Right section with price and payment method */}
                 <div className="hidden lg:flex flex-col lg:items-end mt-4 lg:mt-0 w-full lg:w-auto lg:text-right">
                   {!order.isCancel && <p>{order.paymentMethod}</p>}
-                  {order.sellerAccept && !order.isCancel && (
-                    <p className="text-sm text-green-500 mt-1">
-                      Đã Chấp Nhận Đơn Hàng
-                    </p>
-                  )}
+                  {order.sellerAccept &&
+                    !order.isCancel &&
+                    !order.tradeStatus && (
+                      <p className="text-sm text-green-500 mt-1">
+                        Đã Chấp Nhận Đơn Hàng
+                      </p>
+                    )}
+                  {order.sellerAccept &&
+                    !order.isCancel &&
+                    order.tradeStatus && (
+                      <p className="text-sm text-green-500 mt-1">
+                        Đơn Hàng Đã Hoàn Thành
+                      </p>
+                    )}
                   {order.isCancel && (
                     <p className="text-sm text-red-500 mt-1">Đơn Hàng Đã Huỷ</p>
                   )}
@@ -387,7 +447,7 @@ const Orders = () => {
       {selectedOrder && (
         <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className="bg-white p-2 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl overflow-auto">
+            <div className="bg-white p-2 sm:p-8 rounded-lg shadow-lg w-[80%] sm:h-[78%] h-[95%] max-w-4xl overflow-auto">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Chi tiết đơn hàng</h2>
                 <button
@@ -499,7 +559,7 @@ const Orders = () => {
                     </p>
                   )}
 
-                  {!selectedOrder.isCancel && (
+                  {!selectedOrder.isCancel && !selectedOrder.tradeStatus && (
                     <button
                       className={`bg-red-500 text-white py-2 px-4 rounded-lg w-full mt-4 ${
                         selectedOrder.sellerAccept
@@ -512,12 +572,34 @@ const Orders = () => {
                     </button>
                   )}
 
-                  {selectedOrder.sellerAccept && !selectedOrder.isCancel && (
-                    <p className="text-green-500">
-                      Đơn hàng đã được chấp nhận và đang vận chuyển, không thể
-                      huỷ.
-                    </p>
-                  )}
+                  {!selectedOrder.tradeStatus &&
+                    !selectedOrder.isCancel &&
+                    selectedOrder.sellerAccept && (
+                      <button
+                        className="bg-blue-500 text-white py-2 px-4 rounded-lg w-full mt-4"
+                        onClick={() =>
+                          handleRecievedOrder(selectedOrder.tradeId)
+                        }
+                      >
+                        Đã nhận hàng
+                      </button>
+                    )}
+
+                  {selectedOrder.sellerAccept &&
+                    !selectedOrder.isCancel &&
+                    !selectedOrder.tradeStatus && (
+                      <p className="text-green-500 text-center">
+                        Đơn hàng đã được chấp nhận.
+                      </p>
+                    )}
+
+                  {selectedOrder.sellerAccept &&
+                    !selectedOrder.isCancel &&
+                    selectedOrder.tradeStatus && (
+                      <p className="text-green-500 text-center">
+                        Đơn hàng đã hoàn thành.
+                      </p>
+                    )}
 
                   {!selectedOrder.payment &&
                     !selectedOrder.isCancel &&
@@ -538,5 +620,4 @@ const Orders = () => {
     </div>
   );
 };
-
 export default Orders;
