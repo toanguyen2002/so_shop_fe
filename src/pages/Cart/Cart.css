@@ -150,3 +150,11 @@ h2 {
     width: 150px;
   }
 }
+
+.addition.disabled {
+  pointer-events: none;
+}
+
+.subtraction.disabled {
+  pointer-events: none;
+}

@@ -87,7 +87,7 @@ const ProductDetail = () => {
       try {
         const response = await getProductById(id);
         if (response.status === 200) {
-          console.log(response.data[0]);
+          // console.log(response.data[0]);
           setAttributesData(response.data[0].attributes);
           setDescriptionData(response.data[0].decriptions);
           setProduct(response.data[0]);
@@ -111,14 +111,6 @@ const ProductDetail = () => {
     fetchProduct();
   }, [id]);
 
-  useEffect(() => {
-    console.log("Description Data: ", descriptionData);
-  }, [descriptionData]);
-
-  useEffect(() => {
-    console.log("Selected Classify: ", selectedOptions);
-  }, [selectedOptions]);
-
   // find category name by category id
   useEffect(() => {
     const fetchCategories = async () => {
@@ -139,6 +131,10 @@ const ProductDetail = () => {
 
   // group classifies by key
   useEffect(() => {
+    getGroupClassifies();
+  }, [product]);
+
+  const getGroupClassifies = () => {
     if (product && product.classifies) {
       const grouped = product.classifies.reduce((groups, classify) => {
         if (!groups[classify.key]) {
@@ -149,7 +145,7 @@ const ProductDetail = () => {
       }, {});
       setGroupClassifies(grouped);
     }
-  }, [product]);
+  };
 
   // handle option change
   const handleOptionChange = (key, classify) => {
@@ -235,13 +231,30 @@ const ProductDetail = () => {
     itemAddToCart.productId = product._id;
     itemAddToCart.seller = product.seller;
     itemAddToCart.classifyId = selectedOptions._id;
-    console.log(itemAddToCart);
+    // console.log(itemAddToCart);
     try {
       const response = await addToCart(itemAddToCart);
       if (response.status === 201) {
         setShowNotification(true);
-
-        console.log(response);
+        setQuantity(1);
+        setSelectedValue("");
+        const updatedProduct = await getProductById(product._id);
+        if (updatedProduct.status === 200) {
+          setProduct(updatedProduct.data[0]);
+          setGroupClassifies((groupClassifies) => {
+            const grouped = updatedProduct.data[0].classifies.reduce(
+              (groups, classify) => {
+                if (!groups[classify.key]) {
+                  groups[classify.key] = [];
+                }
+                groups[classify.key].push(classify);
+                return groups;
+              },
+              {}
+            );
+            return grouped;
+          });
+        }
       } else {
         alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
       }
@@ -286,7 +299,7 @@ const ProductDetail = () => {
     };
     setItemPurchase(item);
     setIsModalOpen(true);
-    console.log(itemPurchase);
+    // console.log(itemPurchase);
   };
 
   const handleCloseInform = () => {

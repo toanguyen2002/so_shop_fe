@@ -9,6 +9,7 @@ import {
   getProductById,
 } from "../../../../api/productAPI";
 import { useSelector } from "react-redux";
+import CachedIcon from "@mui/icons-material/Cached";
 import CountUp from "react-countup";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { Filler } from "chart.js";
@@ -138,12 +139,16 @@ const Dashboard = () => {
         if (response.status === 201) {
           const sortedData = response.data.sort((a, b) => a.month - b.month);
           setMonthlyTradeData(sortedData);
-
-          // Get unique years from the data
           const uniqueYears = [
             ...new Set(response.data.map((data) => data.year)),
           ];
-          setYearsList(uniqueYears); // Update available years for selection
+
+          if (!uniqueYears.includes(2024)) {
+            uniqueYears.push(2024);
+          }
+
+          setYearsList(uniqueYears.sort((a, b) => a - b));
+          setSelectedYear(2024);
         }
       } catch (error) {
         console.error("Error fetching trade data for the year:", error);

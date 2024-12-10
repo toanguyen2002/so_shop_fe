@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import CloseIcon from "@mui/icons-material/Close";
+import CachedIcon from "@mui/icons-material/Cached";
 import { useEffect } from "react";
 import {
   acceptTradeAPI,
@@ -196,6 +197,18 @@ const OrderList = () => {
     }
   };
 
+  const handleReload = () => {
+    // Reset filters
+    setSelectedStatus("All");
+    setSelectedDateRange({
+      from: "",
+      to: "",
+    });
+
+    // Re-fetch orders
+    fetchOrdersWithDetails();
+  };
+
   return (
     <div className="p-6">
       {loading && <Loading />}
@@ -244,6 +257,12 @@ const OrderList = () => {
             onClick={() => setSelectedStatus("Canceled")}
           >
             Canceled
+          </button>
+          <button
+            className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 active:bg-blue-500 active:text-white`}
+            onClick={handleReload}
+          >
+            <CachedIcon />
           </button>
         </div>
 

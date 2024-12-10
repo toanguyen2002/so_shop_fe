@@ -17,6 +17,7 @@ import Notification from "../../components/Notification/Notification";
 import { Modal } from "@mui/material";
 import { addTradeAPI, tradePaymentAPI } from "../../api/tradeAPI";
 import Loading from "../../components/Loading/Loading";
+import CachedIcon from "@mui/icons-material/Cached";
 
 const Cart = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -102,7 +103,6 @@ const Cart = () => {
             const selectedClassify = allClassifies.find(
               (classify) => classify._id === item.classifyId
             );
-
             if (selectedClassify) {
               classifyMap[`${item.productId}-${item.classifyId}`] =
                 selectedClassify;
@@ -110,6 +110,7 @@ const Cart = () => {
           }
         }
         setSelectedClassifies(classifyMap);
+        console.log("Selected classifies:", selectedClassifies);
       } catch (error) {
         console.log(error);
       }
@@ -120,8 +121,10 @@ const Cart = () => {
   }, [cartItems]);
 
   // Xử lý thay đổi số lượng sản phẩm trong giỏ hàng
-  const handleQuantityChange = async (productId, delta) => {
-    const item = cartItems.find((item) => item.productId === productId);
+  const handleQuantityChange = async (productId, classifyId, delta) => {
+    const item = cartItems.find(
+      (item) => item.productId === productId && item.classifyId === classifyId
+    );
     if (!item) return;
 
     const newQuantity = item.numberProduct + delta;
@@ -149,7 +152,10 @@ const Cart = () => {
       if (response.status === 201) {
         setCartItems((prevItems) =>
           prevItems.map((item) => {
-            if (item.productId === productId) {
+            if (
+              item.productId === productId &&
+              item.classifyId === classifyId
+            ) {
               return {
                 ...item,
                 numberProduct: newQuantity,
@@ -198,6 +204,7 @@ const Cart = () => {
         (item) => item.productId === productId && item.classifyId === classifyId
       )?.numberProduct,
     };
+    console.log("Cart DTO:", cartDTO);
     try {
       const response = await deleteCartItem(cartDTO);
       if (response.status === 201) {
@@ -310,6 +317,10 @@ const Cart = () => {
     setOpenPurchaseModal(true);
   };
 
+  const handleReload = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="shopping-cart">
       {loading && <Loading />}
@@ -321,7 +332,9 @@ const Cart = () => {
       )}
       <Navbar />
       <div className="cart-content">
-        <h2>Giỏ hàng của bạn</h2>
+        <h2 className="text-2xl text-center pb-4 font-medium">
+          Giỏ hàng của bạn
+        </h2>
         <div className="cart-items">
           {cartItems.map((item) => {
             const product = productData[item.productId];
@@ -377,15 +390,31 @@ const Cart = () => {
                 </div>
                 <div className="product-quantity">
                   <button
-                    onClick={() => handleQuantityChange(item.productId, -1)}
-                    className="subtraction"
+                    disabled={item.numberProduct <= 1}
+                    onClick={() =>
+                      handleQuantityChange(item.productId, item.classifyId, -1)
+                    }
+                    className={`subtraction ${
+                      item.numberProduct <= 1 ? "disabled" : ""
+                    }`}
                   >
                     -
                   </button>
                   <input type="text" value={item.numberProduct} readOnly />
                   <button
-                    onClick={() => handleQuantityChange(item.productId, +1)}
-                    className="addition"
+                    disabled={
+                      selectedClassifies[`${item.productId}-${item.classifyId}`]
+                        ?.stock == 0
+                    }
+                    onClick={() =>
+                      handleQuantityChange(item.productId, item.classifyId, +1)
+                    }
+                    className={`addition ${
+                      selectedClassifies[`${item.productId}-${item.classifyId}`]
+                        ?.stock == 0
+                        ? "disabled"
+                        : ""
+                    }`}
                   >
                     +
                   </button>
@@ -426,13 +455,21 @@ const Cart = () => {
         </div>
         <div className="cart-actions">
           <button className="continue-shopping">Tiếp Tục Shopping</button>
-          <button
-            onClick={handleOpenPurchaseModal}
-            className="make-purchase disabled:bg-gray-300"
-            disabled={selectedItems.length === 0}
-          >
-            Thanh Toán
-          </button>
+          <div className="flex gap-3">
+            <button
+              className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 active:bg-blue-500 active:text-white`}
+              onClick={handleReload}
+            >
+              <CachedIcon />
+            </button>
+            <button
+              onClick={handleOpenPurchaseModal}
+              className="make-purchase disabled:bg-gray-300"
+              disabled={selectedItems.length === 0}
+            >
+              Thanh Toán
+            </button>
+          </div>
         </div>
       </div>
 

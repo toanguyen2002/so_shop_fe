@@ -56,6 +56,7 @@ const Navbar = () => {
 
   const inputRef = useRef(null);
   const historyRef = useRef(null);
+  const historyMobileRef = useRef(null);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -84,18 +85,18 @@ const Navbar = () => {
     setSearchHistory(storedHistory.filter((term) => typeof term === "string"));
   }, []);
 
-  useEffect(() => {
-    if (isFocused) {
-      // Chỉ khi input đã được focus
-      if (debouncedSearchTerm || !isTyping) {
-        setShowHistory(true);
-      } else {
-        setShowHistory(false);
-      }
-    } else {
-      setShowHistory(false); // Ẩn lịch sử nếu không có focus
-    }
-  }, [debouncedSearchTerm, isTyping, isFocused]);
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     // Chỉ khi input đã được focus
+  //     if (debouncedSearchTerm || !isTyping) {
+  //       setShowHistory(true);
+  //     } else {
+  //       setShowHistory(false);
+  //     }
+  //   } else {
+  //     // setShowHistory(false);
+  //   }
+  // }, [debouncedSearchTerm, isTyping, isFocused]);
 
   const handleSearch = async (searchValue) => {
     const valueToSearch = searchValue.trim();
@@ -129,7 +130,9 @@ const Navbar = () => {
         inputRef.current &&
         !inputRef.current.contains(event.target) &&
         historyRef.current &&
-        !historyRef.current.contains(event.target)
+        !historyRef.current.contains(event.target) &&
+        historyMobileRef.current &&
+        !historyMobileRef.current.contains(event.target)
       ) {
         setIsFocused(false); // Đóng focus input
         setShowHistory(false); // Ẩn lịch sử tìm kiếm
@@ -172,8 +175,8 @@ const Navbar = () => {
 
   const handleShowCart = async () => {
     const response = await getCartItemByBuyerId(user._id);
-    const processedItems = response.data.products?.flatMap((product) =>
-      product.items.map((item) => ({
+    const processedItems = response.data?.products?.flatMap((product) =>
+      product?.items?.map((item) => ({
         ...item,
         seller: product.seller,
         numberProduct: item.numberProduct || 1,
@@ -211,7 +214,7 @@ const Navbar = () => {
       }
     };
 
-    if (cartItems.length > 0) {
+    if (cartItems?.length > 0) {
       fetchProductData();
     }
   }, [cartItems]);
@@ -383,7 +386,7 @@ const Navbar = () => {
                   </p>
                 ) : isTyping ? (
                   searchHistory
-                    .filter((term) => {
+                    ?.filter((term) => {
                       // Chỉ lọc khi người dùng đang gõ text
                       if (
                         typeof term === "string" &&
@@ -660,7 +663,7 @@ const Navbar = () => {
             <SearchIcon />
           </button>
           {showHistory && (
-            <div ref={historyRef} className="search-history">
+            <div ref={historyMobileRef} className="search-history">
               {searchHistory.length === 0 ? (
                 <p className="history-item">Chưa có lịch sử tìm kiếm</p>
               ) : isTyping ? (

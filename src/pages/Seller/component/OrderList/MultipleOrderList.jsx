@@ -9,6 +9,8 @@ import {
 } from "../../../../api/tradeAPI";
 import { getProductById } from "../../../../api/productAPI";
 import Loading from "../../../../components/Loading/Loading";
+import CachedIcon from "@mui/icons-material/Cached";
+
 const MultipleOrderList = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -205,6 +207,18 @@ const MultipleOrderList = () => {
     }
   };
 
+  const handleReload = () => {
+    // Reset filters
+    setSelectedStatus("All");
+    setSelectedDateRange({
+      from: "",
+      to: "",
+    });
+
+    // Re-fetch orders
+    fetchOrdersWithDetails();
+  };
+
   return (
     <div className="p-6">
       {loading && <Loading />}
@@ -253,6 +267,12 @@ const MultipleOrderList = () => {
             onClick={() => setSelectedStatus("Canceled")}
           >
             Canceled
+          </button>
+          <button
+            className={`px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 active:bg-blue-500 active:text-white`}
+            onClick={handleReload}
+          >
+            <CachedIcon />
           </button>
         </div>
 
