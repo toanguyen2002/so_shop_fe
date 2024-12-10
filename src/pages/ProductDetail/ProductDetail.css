@@ -260,7 +260,7 @@
 }
 
 .add-cart-btn {
-  border: 2px solid var(--color-secondary);
+  border: 2px solid var(--color-primary);
   background-color: #fff;
   padding: 10px 20px;
   cursor: pointer;
@@ -273,17 +273,22 @@
 }
 
 .add-cart-btn:active {
-  background-color: var(--color-secondary);
+  background-color: var(--color-primary);
 }
 
 .buy-now-btn {
-  border: 2px solid var(--color-secondary);
-  background-color: var(--color-secondary);
+  border: 2px solid var(--color-primary);
+  background-color: var(--color-primary);
   color: #fff;
   padding: 10px 20px;
   cursor: pointer;
   /* transition: background-color 0.3s ease; */
   border-radius: 4px;
+}
+
+.buy-now-btn:active {
+  background-color: var(--color-tertiary-dark);
+  color: var(--color-primary);
 }
 
 .buy-now-btn:hover {
