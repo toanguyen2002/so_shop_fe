@@ -238,6 +238,7 @@ const ProductDetail = () => {
         setShowNotification(true);
         setQuantity(1);
         setSelectedValue("");
+        setSelectedOptions({});
         const updatedProduct = await getProductById(product._id);
         if (updatedProduct.status === 200) {
           setProduct(updatedProduct.data[0]);
