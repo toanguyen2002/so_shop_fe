@@ -26,94 +26,95 @@ const MultipleOrderList = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
-    const fetchOrdersWithDetails = async () => {
-      setLoading(true);
-      try {
-        const fetchedOrders = await getTradeBySellerAPI(
-          user._id,
-          user.access_token
-        );
-        if (fetchedOrders.status === 200) {
-          console.log("Fetch orders", fetchedOrders.data);
-
-          const detailedOrders = await Promise.all(
-            fetchedOrders.data
-              .filter((order) => order.products.length > 1)
-              .filter(
-                (order) =>
-                  (order.paymentMethod === "zalo" && order.payment === true) ||
-                  order.paymentMethod === "cash"
-              )
-              .map(async (order) => {
-                const productDetails = await Promise.all(
-                  order.products.map(async (product) => {
-                    const productResponse = await getProductById(
-                      product.productId
-                    );
-                    if (productResponse.status === 200) {
-                      const productData = productResponse.data[0];
-
-                      const classify = productData.classifies?.find(
-                        (c) => c._id === product.classifyId
-                      );
-
-                      return {
-                        productName: productData.productName,
-                        image: productData.images?.[0] || "",
-                        brand: productData.brand,
-                        category: productData.category,
-                        classify: classify ? classify.value : "N/A",
-                        price: classify ? classify.price : "N/A",
-                        numberProduct: product.numberProduct,
-                      };
-                    }
-                    return null;
-                  })
-                );
-
-                const formattedDate = new Date(
-                  order.dateTrade
-                ).toLocaleDateString("en-GB");
-                const formattedTime = new Date(
-                  order.dateTrade
-                ).toLocaleTimeString("en-GB");
-
-                return {
-                  ...order,
-                  productsDetails: productDetails, // Store all product details
-                  formattedDate,
-                  formattedTime,
-                  phoneContact: user.number,
-                  status: order.isCancel
-                    ? "Canceled"
-                    : order.sellerAccept
-                    ? "Approval"
-                    : "Pending",
-                  statusColor: order.isCancel
-                    ? "text-red-500"
-                    : order.sellerAccept
-                    ? "text-green-500"
-                    : "text-yellow-500",
-                  paymentMethod:
-                    order.paymentMethod == "cash"
-                      ? "Thanh toán khi nhận hàng"
-                      : "ZaloPay",
-                };
-              })
-          );
-          const sortedOrders = detailedOrders.sort(
-            (a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)
-          );
-          setOrders(sortedOrders);
-        }
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrdersWithDetails();
   }, [user._id, user.access_token]);
+
+  const fetchOrdersWithDetails = async () => {
+    setLoading(true);
+    try {
+      const fetchedOrders = await getTradeBySellerAPI(
+        user._id,
+        user.access_token
+      );
+      if (fetchedOrders.status === 200) {
+        console.log("Fetch orders", fetchedOrders.data);
+
+        const detailedOrders = await Promise.all(
+          fetchedOrders.data
+            .filter((order) => order.products.length > 1)
+            .filter(
+              (order) =>
+                (order.paymentMethod === "zalo" && order.payment === true) ||
+                order.paymentMethod === "cash"
+            )
+            .map(async (order) => {
+              const productDetails = await Promise.all(
+                order.products.map(async (product) => {
+                  const productResponse = await getProductById(
+                    product.productId
+                  );
+                  if (productResponse.status === 200) {
+                    const productData = productResponse.data[0];
+
+                    const classify = productData.classifies?.find(
+                      (c) => c._id === product.classifyId
+                    );
+
+                    return {
+                      productName: productData.productName,
+                      image: productData.images?.[0] || "",
+                      brand: productData.brand,
+                      category: productData.category,
+                      classify: classify ? classify.value : "N/A",
+                      price: classify ? classify.price : "N/A",
+                      numberProduct: product.numberProduct,
+                    };
+                  }
+                  return null;
+                })
+              );
+
+              const formattedDate = new Date(
+                order.dateTrade
+              ).toLocaleDateString("en-GB");
+              const formattedTime = new Date(
+                order.dateTrade
+              ).toLocaleTimeString("en-GB");
+
+              return {
+                ...order,
+                productsDetails: productDetails, // Store all product details
+                formattedDate,
+                formattedTime,
+                phoneContact: user.number,
+                status: order.isCancel
+                  ? "Canceled"
+                  : order.sellerAccept
+                  ? "Approval"
+                  : "Pending",
+                statusColor: order.isCancel
+                  ? "text-red-500"
+                  : order.sellerAccept
+                  ? "text-green-500"
+                  : "text-yellow-500",
+                paymentMethod:
+                  order.paymentMethod == "cash"
+                    ? "Thanh toán khi nhận hàng"
+                    : "ZaloPay",
+              };
+            })
+        );
+        const sortedOrders = detailedOrders.sort(
+          (a, b) => new Date(b.dateTrade) - new Date(a.dateTrade)
+        );
+        setOrders(sortedOrders);
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter orders based on status and date range
   const filteredOrders = orders.filter((order) => {

@@ -15,6 +15,7 @@ import Loading from "../../../../components/Loading/Loading";
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import Notification from "../../../../components/Notification/Notification";
 
 const AddProduct = () => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -33,6 +34,7 @@ const AddProduct = () => {
   const [images, setImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
+  const [showNotification, setShowNotification] = useState(false);
 
   const validateFields = () => {
     const errors = {};
@@ -220,11 +222,10 @@ const AddProduct = () => {
         );
         console.log(resDescription.data);
       }
-
       // Reset form
       setProductName("");
       setBrand("");
-      setCategory("");
+      setCategory(categories[0]._id);
       setClassifies([{ key: "", value: "", price: 0, stock: 0 }]);
       setAttributes([{ key: "", value: "" }]);
       setProductDescription([{ key: "", value: "" }]);
@@ -234,12 +235,19 @@ const AddProduct = () => {
       console.error("An error occurred while submitting:", error);
     } finally {
       setLoading(false);
+      setShowNotification(true);
     }
   };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       {loading && <Loading />}
+      {showNotification && (
+        <Notification
+          message="Thêm sản phẩm thành công"
+          onClose={() => setShowNotification(false)}
+        />
+      )}
       <h1 className="text-xl font-bold mb-4">Thêm Mới Sản Phẩm</h1>
       {/* Product Name */}
       <div className="mb-4">
