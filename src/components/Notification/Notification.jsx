@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./Notification.css";
 import { useState } from "react";
 
-const Notification = ({ message, onClose }) => {
+const Notification = ({ message, onClose, status }) => {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     setVisible(true);
@@ -13,8 +13,24 @@ const Notification = ({ message, onClose }) => {
 
     return () => clearTimeout(timer);
   }, [onClose]);
+
+  const getStatusClass = () => {
+    switch (status) {
+      case "error":
+        return "notification-error";
+      case "success":
+        return "notification-success";
+      default:
+        return "notification-default";
+    }
+  };
+
   return (
-    <div className={`notification-bar ${visible ? "show" : "fade-out"}`}>
+    <div
+      className={`notification-bar ${getStatusClass()} ${
+        visible ? "show" : "fade-out"
+      }`}
+    >
       {message}
     </div>
   );

@@ -54,6 +54,9 @@ const ProductDetail = () => {
   const [canPurchase, setCanPurchase] = useState(false);
   const [showWarningUpdate, setShowWarningUpdate] = useState(false);
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [statusAddToCart, setStatusAddToCart] = useState("");
+
   const [itemPurchase, setItemPurchase] = useState({
     buyer: "",
     productId: "",
@@ -234,11 +237,24 @@ const ProductDetail = () => {
     // console.log(itemAddToCart);
     try {
       const response = await addToCart(itemAddToCart);
+
       if (response.status === 201) {
+        if (response.data.status !== "thêm thành công") {
+          setShowNotification(true);
+          setStatusAddToCart("error");
+          setAlertMessage(
+            "Có lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng refresh trang và thử lại."
+          );
+          return;
+        }
+
+        setStatusAddToCart("success");
+        setAlertMessage("Thêm sản phẩm vào giỏ hàng thành công!");
         setShowNotification(true);
         setQuantity(1);
         setSelectedValue("");
         setSelectedOptions({});
+
         const updatedProduct = await getProductById(product._id);
         if (updatedProduct.status === 200) {
           setProduct(updatedProduct.data[0]);
@@ -265,41 +281,48 @@ const ProductDetail = () => {
   };
 
   const handleBuyNowClick = () => {
-    if (!product) return;
+    setLoading(true);
+    try {
+      if (!product) return;
 
-    if (!user) {
-      setOpenInform(true);
-      return;
+      if (!user) {
+        setOpenInform(true);
+        return;
+      }
+
+      if (
+        !user.name ||
+        !user.userName ||
+        !user.number ||
+        !user.address ||
+        !user.sex ||
+        !user.avata
+      ) {
+        setCanPurchase(false);
+        setShowWarningUpdate(true); // Hiển thị modal cảnh báo
+        return;
+      }
+      setCanPurchase(true);
+
+      const item = {
+        buyer: user._id,
+        productId: product._id,
+        productName: product.productName,
+        brand: product.brand,
+        image: product.images[0],
+        categoryName: category,
+        classify: selectedOptions,
+        seller: product.seller,
+        numberProduct: quantity,
+        price: totalPrice,
+      };
+      setItemPurchase(item);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    if (
-      !user.name ||
-      !user.userName ||
-      !user.number ||
-      !user.address ||
-      !user.sex ||
-      !user.avata
-    ) {
-      setCanPurchase(false);
-      setShowWarningUpdate(true); // Hiển thị modal cảnh báo
-      return;
-    }
-    setCanPurchase(true);
-
-    const item = {
-      buyer: user._id,
-      productId: product._id,
-      productName: product.productName,
-      brand: product.brand,
-      image: product.images[0],
-      categoryName: category,
-      classify: selectedOptions,
-      seller: product.seller,
-      numberProduct: quantity,
-      price: totalPrice,
-    };
-    setItemPurchase(item);
-    setIsModalOpen(true);
     // console.log(itemPurchase);
   };
 
@@ -322,8 +345,9 @@ const ProductDetail = () => {
       {loading && <Loading />}
       {showNotification && (
         <Notification
-          message="Thêm sản phẩm vào giỏ hàng thành công!"
+          message={alertMessage}
           onClose={() => setShowNotification(false)}
+          status={statusAddToCart}
         />
       )}
       <Navbar />

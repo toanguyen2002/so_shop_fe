@@ -477,7 +477,7 @@
   .search-btn {
     font-size: 0.7rem;
     padding: 5px;
-    margin-left: 6px;
+    /* margin-left: 6px; */
   }
 
   .menu-btn {

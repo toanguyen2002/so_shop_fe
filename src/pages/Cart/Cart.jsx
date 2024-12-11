@@ -274,7 +274,7 @@ const Cart = () => {
       address: deliveryAddress,
       from: "cart",
     };
-
+    setLoading(true);
     // Process the formData with the selected items for payment
     try {
       console.log("Adding trade:", formData);
@@ -310,6 +310,8 @@ const Cart = () => {
       }
     } catch (error) {
       console.error("Error adding trade:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -336,7 +338,7 @@ const Cart = () => {
           Giỏ hàng của bạn
         </h2>
         <div className="cart-items">
-          {cartItems.map((item) => {
+          {cartItems?.map((item) => {
             const product = productData[item.productId];
             const classify =
               selectedClassifies[`${item.productId}-${item.classifyId}`];
@@ -610,17 +612,23 @@ const Cart = () => {
                 {/* Confirm & Cancel Buttons */}
                 <div className="flex justify-end space-x-2 mt-6">
                   <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
+                    className="bg-gray-400 text-white px-4 py-2 rounded-md"
                     onClick={() => setOpenPurchaseModal(false)}
                   >
                     Hủy
                   </button>
                   <button
-                    className="bg-green-500 text-white px-4 py-2 rounded-md disabled:bg-gray-300"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:bg-gray-300"
                     onClick={handlePurchase}
                     disabled={!paymentMethod || !deliveryAddress}
                   >
-                    Xác nhận
+                    {loading
+                      ? paymentMethod === "zalo"
+                        ? "Đang thanh toán..."
+                        : "Đang đặt hàng..."
+                      : paymentMethod === "zalo"
+                      ? "Thanh toán"
+                      : "Đặt hàng"}
                   </button>
                 </div>
               </div>
