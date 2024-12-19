@@ -9,7 +9,7 @@ import Loading from "../../../../components/Loading/Loading";
 const ProductTable = ({ setActiveTab, setProductEdit }) => {
   const [columns, setColumns] = useState([
     { name: "ProductID", visible: true },
-    { name: "Name", visible: true },
+    { name: "Tên sản phẩm", visible: true },
     { name: "Danh mục", visible: true },
     { name: "Thương hiệu", visible: true },
     { name: "Ảnh", visible: true },
@@ -94,7 +94,7 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
 
   const getValueByColumnName = (product, column) => {
     switch (column) {
-      case "Name":
+      case "Tên sản phẩm":
         return product.productName;
       case "Danh mục":
         return product.categories[0]?.categoriesName || "";
@@ -182,7 +182,7 @@ const ProductTable = ({ setActiveTab, setProductEdit }) => {
                     col.visible && (
                       <td key={col.name} className="py-2 px-4 text-sm">
                         {col.name === "ProductID" && product._id.slice(-6)}
-                        {col.name === "Name" && product.productName}
+                        {col.name === "Tên sản phẩm" && product.productName}
                         {col.name === "Danh mục" &&
                           product.categories[0]?.categoriesName}
                         {col.name === "Thương hiệu" && product.brand}

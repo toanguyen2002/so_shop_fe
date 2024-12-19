@@ -63,16 +63,18 @@ const RegisterList = () => {
   return (
     <div className="p-6">
       {loading && <Loading />}
-      <h2 className="text-2xl font-semibold mb-4">Seller Registration List</h2>
+      <h2 className="text-2xl font-semibold mb-4">
+        Danh sách đăng ký bán hàng
+      </h2>
 
       {/* Registration Table */}
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
         <thead>
           <tr className="bg-gray-100 text-left">
             <th className="p-4 border-b">Register ID</th>
-            <th className="p-4 border-b">Seller Name</th>
-            <th className="p-4 border-b">Address</th>
-            <th className="p-4 border-b">Phone</th>
+            <th className="p-4 border-b">Tên đăng ký</th>
+            <th className="p-4 border-b">Địa chỉ</th>
+            <th className="p-4 border-b">Số điện thoại</th>
             <th className="p-4 border-b">Email</th>
             {/* <th className="p-4 border-b">Registration Date</th> */}
             {/* <th className="p-4 border-b">Status</th> */}
@@ -134,20 +136,20 @@ const RegisterList = () => {
                 <div>
                   <div className="mb-4">
                     <strong className="text-sm text-gray-600">
-                      Seller Name:
+                      Tên đăng ký:
                     </strong>
                     <p className="text-gray-800">
                       {selectedRegistration?.name}
                     </p>
                   </div>
                   <div className="mb-4">
-                    <strong className="text-sm text-gray-600">Phone:</strong>
+                    <strong className="text-sm text-gray-600">Số:</strong>
                     <p className="text-gray-800">
                       {selectedRegistration?.number}
                     </p>
                   </div>
                   <div className="mb-4">
-                    <strong className="text-sm text-gray-600">Address:</strong>
+                    <strong className="text-sm text-gray-600">Địa chỉ:</strong>
                     <p className="text-gray-800">
                       {selectedRegistration?.address}
                     </p>
@@ -178,13 +180,13 @@ const RegisterList = () => {
                   }
                   className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
                 >
-                  Approve
+                  Chấp nhận đăng ký
                 </button>
                 <button
                   onClick={handleRejectRegistration}
                   className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
                 >
-                  Cancel
+                  Huỷ
                 </button>
               </div>
             </div>

@@ -472,7 +472,7 @@ const Dashboard = () => {
   return (
     <div className="flex-1 p-6 bg-gray-100">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Quản Lí Thống Kê</h1>
 
         {/* Tháng và Năm Selector */}
         <div className="flex items-center space-x-4">

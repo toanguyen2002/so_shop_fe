@@ -16,7 +16,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   return (
     <div className="w-64 h-screen bg-gray-800 text-white">
-      <div className="p-4 text-lg font-bold">SELLER CENTER</div>
+      <div className="p-4 text-lg font-bold">Trung Tâm Bán Hàng</div>
       <nav>
         <ul>
           <li
@@ -25,7 +25,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             }`}
             onClick={() => setActiveTab("dashboard")}
           >
-            Dashboard
+            Quản lí thống kê
           </li>
 
           {/* Products Section with Dropdown */}
@@ -36,7 +36,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               }`}
               onClick={toggleProductsDropdown}
             >
-              <span>Products</span>
+              <span>Quản lí sản phẩm</span>
               <span>{isProductsDropdownOpen ? "▼" : "►"}</span>
             </div>
 
@@ -49,7 +49,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                   }`}
                   onClick={() => setActiveTab("add-product")}
                 >
-                  Add Product
+                  Thêm sản phẩm
                 </li>
                 <li
                   className={`p-2 pl-4 hover:bg-gray-700 cursor-pointer ${
@@ -57,7 +57,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                   }`}
                   onClick={() => setActiveTab("view-product")}
                 >
-                  View Product
+                  Danh sách sản phẩm
                 </li>
               </ul>
             )}
@@ -71,7 +71,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
               }`}
               onClick={toggleOrdersDropdown}
             >
-              <span>Orders</span>
+              <span>Quản lí đơn hàng</span>
               <span>{isOrdersDropdownOpen ? "▼" : "►"}</span>
             </div>
 
@@ -84,7 +84,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                   }`}
                   onClick={() => setActiveTab("single-order")}
                 >
-                  Single Order
+                  Đơn hàng đơn
                 </li>
                 <li
                   className={`p-2 pl-4 hover:bg-gray-700 cursor-pointer ${
@@ -92,7 +92,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                   }`}
                   onClick={() => setActiveTab("multiple-orders")}
                 >
-                  Multiple Orders
+                  Đơn hàng gộp
                 </li>
               </ul>
             )}
@@ -113,7 +113,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         className="absolute bottom-0 w-full p-4 text-center hover:bg-gray-700 cursor-pointer"
         onClick={() => navigate("/")}
       >
-        Back to Home
+        Trở về trang chủ
       </div>
     </div>
   );

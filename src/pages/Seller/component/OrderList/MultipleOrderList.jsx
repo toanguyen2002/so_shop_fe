@@ -223,7 +223,7 @@ const MultipleOrderList = () => {
   return (
     <div className="p-6">
       {loading && <Loading />}
-      <h2 className="text-2xl font-semibold mb-4">Multiple Order List</h2>
+      <h2 className="text-2xl font-semibold mb-4">Danh sách đơn hàng gộp</h2>
 
       {/* Filter Section */}
       <div className="flex justify-between mb-4">

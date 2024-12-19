@@ -6,7 +6,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
 
   return (
     <div className="w-64 h-screen bg-gray-800 text-white">
-      <div className="p-4 text-lg font-bold">SELLER CENTER</div>
+      <div className="p-4 text-lg font-bold">Trung Tâm Quản lý</div>
       <nav>
         <ul>
           <li
@@ -15,7 +15,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             }`}
             onClick={() => setActiveTab("register-list")}
           >
-            Register List
+            Quản lý đăng ký
           </li>
         </ul>
       </nav>
@@ -24,7 +24,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         className="absolute bottom-0 w-full p-4 text-center hover:bg-gray-700 cursor-pointer"
         onClick={() => navigate("/")}
       >
-        Back to Home
+        Trở về trang chủ
       </div>
     </div>
   );
